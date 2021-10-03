@@ -23,7 +23,6 @@ function LoginForm() {
       setHidePassword(false)
     }
     if (hidePassword === false) {
-      alert('sent')
       const result = await axios.post('/login', { email, password, remember })
       console.log(`result`, result)
       setToken(result.data.token)
@@ -31,6 +30,8 @@ function LoginForm() {
       window.location.reload()
     }
   }
+
+
   return (
     <div>
       {/* <!-- Modal --> */}
@@ -42,27 +43,36 @@ function LoginForm() {
               <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div className="modal-body">
-              <p>Email address</p>
-              <input type="text" value={email} onChange={e => setEmail(e.target.value)} />
-              <input type="text" value={password} onChange={e => setPassword(e.target.value)} hidden={hidePassword} />
-              <button onClick={handleClickNext}>{buttonText}</button>
+              <div className="input-group mb-3">
+                <label htmlFor="" className='input-group-text'>Email Address</label>
+                <input type="text" className='form-control' value={email} onChange={e => setEmail(e.target.value)} />
+              </div>
+              <div className="input-group mb-3" hidden={hidePassword}>
+                <label htmlFor="" className='input-group-text'>Password</label>
+                <input type="password" className='form-control' value={password} onChange={e => setPassword(e.target.value)} />
+              </div>
+              <div className="d-grid gap-2">
+                <button className='form btn btn-success' onClick={handleClickNext}>{buttonText}</button>
+              </div>
               <br />
-              <div className='d-flex'>
-                <input type="checkbox" onClick={() => setRemember(cur => !cur)} />
-                <p>Remember me</p>
+              <div className="input-group mb-3">
+                <div className="input-group-text">
+                  <input className="form-check-input" type="checkbox" onClick={() => setRemember(cur => !cur)} />
+                </div>
+                <div className="col-4">
+                  <span className="form-control">Remember me</span>
+                </div>
               </div>
               <p>Or sign in using</p>
               <div className="d-flex">
-                <p>google</p>&nbsp;
-                <p>facebook</p>&nbsp;
-                <p>linkedin</p>
+                <span className='btn btn-danger'>google</span>&nbsp;
+                <span className='btn btn-primary'>facebook</span>&nbsp;
+                <span className='btn btn-warning'>linkedin</span>
               </div>
 
             </div>
-            <div className="modal-footer">
-              <p data-bs-toggle="modal" data-bs-target="#registerForm">Or click here to create your free account.</p>
-              {/* <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" className="btn btn-primary">Save changes</button> */}
+            <div className="modal-footer d-flex align-items-center">
+              <span  >Or <a href="" className='link-primary ' data-bs-toggle="modal" data-bs-target="#registerForm">CLICK HERE</a> to create your free account.</span>
             </div>
           </div>
         </div>

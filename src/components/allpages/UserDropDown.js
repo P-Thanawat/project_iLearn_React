@@ -3,6 +3,7 @@ import { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import { removeToken } from '../../services/localStorage';
+import '../../css/userDropDown.css'
 
 function UserDropDown() {
   const { user } = useContext(AuthContext);
@@ -18,12 +19,12 @@ function UserDropDown() {
       <div className="modal fade" id="userDropDown" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div className="modal-dialog">
           <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="exampleModalLabel">Modal title</h5>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
             <div className="modal-body">
-              <p>{user.studentPoint}</p>
+              <div className="d-flex justify-content-center align-items-center">
+                <img src={user.profilePicture} alt="profilePicture" className='profilePicture' />
+                <p className='badge bg-primary text-wrap'>{user.studentPoint}</p>
+              </div>
+
               <p>{user.firstName} {user.lastName}</p>
               <p>{user.email}</p>
               <p className='btn btn-success' data-bs-dismiss="modal"><Link to={`/learnProfile/${user.id}`}>My Profile</Link></p>
@@ -31,8 +32,6 @@ function UserDropDown() {
               <p className='btn btn-success' onClick={handleLogout}>Log out</p>
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-              <button type="button" className="btn btn-primary">Save changes</button>
             </div>
           </div>
         </div>

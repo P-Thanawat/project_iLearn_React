@@ -1,6 +1,6 @@
 import './App.css';
-import { useContext, useState, useEffect } from 'react';
-import { BrowserRouter, Switch, Route, Redirect } from 'react-router-dom'
+import { useContext, useEffect } from 'react';
+import { Switch, Route, Redirect } from 'react-router-dom'
 import { AuthContext } from './contexts/AuthContext';
 
 import AddCard from './pages/AddCard';
@@ -14,16 +14,18 @@ import LearnProfile from './pages/LearnProfile';
 import Messenger from './pages/Messager';
 import Payment from './pages/Payment';
 import TeacherProfile from './pages/TeacherProfile';
-import Header from './components/allpages/Header';
 import UserDropDown from './components/allpages/UserDropDown';
 import RegisterForm from './components/homepage/RegisterForm';
-import LoginForm from './components/homepage/LoginForm';
+import LoginForm from './components/allpages/LoginForm';
 import MoreInfo from './components/homepage/MoreInfo';
 import Hamburger from './components/homepage/Hamburger';
 import MessengerBox from './components/homepage/MessengerBox';
-import { showLearnerFormContext, ShowLearnerFormProvider } from './contexts/ShowLeanerFormContext';
+import { showLearnerFormContext } from './contexts/ShowLeanerFormContext';
 import LearnerForm from './components/allpages/LearnerForm';
-import axios from 'axios';
+import axios from './config/axios';
+import { TeacherFormContext } from './contexts/showTeacherFormContext';
+import TeacherForm from './components/allpages/TeacherForm';
+import AlertMessage from './components/allpages/AlertMessage';
 
 
 function App() {
@@ -31,11 +33,10 @@ function App() {
   const { user } = useContext(AuthContext);
   const role = user ? 'user' : 'guest'
   const { showLearnerForm, setShowLearnerForm } = useContext(showLearnerFormContext)
-
+  const { showTeacherForm, setShowTeacherForm } = useContext(TeacherFormContext)
   useEffect(() => {
     const run = async () => {
       try {
-        console.log('here')
         if (user) {
           const { data: { data: teacherProfile } } = await axios.get(`/teacherProfile/byUserId/${user.id}`)
           const { data: { data: learnerProfile } } = await axios.get(`/learnerProfile/byUserId/${user.id}`)
@@ -45,6 +46,10 @@ function App() {
           if (user.typeAccount === 'learner' && !learnerProfile) {
             console.log('showLearn')
             setShowLearnerForm(true)
+          }
+          if (user.typeAccount === 'teacher' && !teacherProfile) {
+            console.log('showTeacher')
+            setShowTeacherForm(true)
           }
         }
       }
@@ -65,6 +70,8 @@ function App() {
       <Hamburger /> {/* modal */}
       <MessengerBox /> {/* modal */}
       <LearnerForm /> {/* modal */}
+      <TeacherForm /> {/* modal */}
+      <AlertMessage />
       <Switch>
         <Route path='/findTeacher' component={FindTeacher} />
         <Route path='/exchangeGroup' component={Exchange} />
