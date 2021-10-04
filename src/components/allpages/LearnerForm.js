@@ -20,12 +20,13 @@ function LearnerForm() {
   const handleSubmit = async e => {
     try {
       e.preventDefault();
+      handleClose();
       const learner = await axios.post('/learnerProfile', { learnerAboutMe })
-      const language = await axios.post('/languageSpeak', { language })
+      const languageData = await axios.post('/languageSpeak', { language })
       secondLanguage && await axios.post('/languageSpeak', { language: secondLanguage })
       thirdLanguage && await axios.post('/languageSpeak', { language: thirdLanguage })
 
-      if (learner && language) {
+      if (learner && languageData) {
         console.log('Create Learner Profile Successful')
         setMessageText('Create Learner Profile Successful')
         setShowAlertMessage(true);

@@ -1,3 +1,30 @@
-.indexHeader {
+.indexHeaderHome {
+  display: flex;
+  justify-content: space-between;
+  /* border: 1px dashed red; */
+  color: white;
+  height: 100px;
+  margin: 0px;
+  padding: 0px;
+  /* background-color: salmon; */
+}
+.indexHeaderOther {
+  display: flex;
+  justify-content: space-between;
+  /* border: 1px dashed red; */
+  color: white;
+  height: 100px;
+  margin: 0px;
+  padding: 0px;
   background-color: salmon;
+}
+
+.profilePicturess {
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
+}
+
+.username {
+  /* width: 100px; */
 }

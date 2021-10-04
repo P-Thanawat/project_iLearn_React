@@ -6,19 +6,22 @@ import { BrowserRouter } from 'react-router-dom';
 import { ShowLearnerFormProvider } from './contexts/ShowLeanerFormContext';
 import { TeacherFormProvider } from './contexts/showTeacherFormContext'
 import { AlertMessageProvider } from './contexts/AlertMessageContext';
+import { ShowLessonFormProvider } from './contexts/showLessonFormContext';
 
 ReactDOM.render(
-  <AlertMessageProvider>
-    <TeacherFormProvider>
-      <ShowLearnerFormProvider>
-        <AuthContextProvider>
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </AuthContextProvider>
-      </ShowLearnerFormProvider>
-    </TeacherFormProvider>
-  </AlertMessageProvider>
+  <ShowLessonFormProvider>
+    <AlertMessageProvider>
+      <TeacherFormProvider>
+        <ShowLearnerFormProvider>
+          <AuthContextProvider>
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </AuthContextProvider>
+        </ShowLearnerFormProvider>
+      </TeacherFormProvider>
+    </AlertMessageProvider>
+  </ShowLessonFormProvider>
   ,
   document.getElementById('root')
 );

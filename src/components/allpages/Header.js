@@ -2,15 +2,14 @@ import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { AuthContext } from '../../contexts/AuthContext';
 import '../../css/header.css'
-import UserDropDown from './UserDropDown';
 
 
-function Header() {
+function Header({ page }) {
   const { user } = useContext(AuthContext);
 
   return (
 
-    <div className="indexHeader">
+    <div className={page === 'home' ? 'indexHeaderHome' : 'indexHeaderOther'}>
 
       <div className="left">
         <div className="hamburger" data-bs-toggle="modal" data-bs-target="#hamburger">
@@ -19,40 +18,42 @@ function Header() {
           <div className="rectangle"></div>
         </div>
         <div className="logo">
-          <h1><Link to='/'>i<ins>Learn</ins></Link></h1>
+          <Link to='/'><h1 className='btn text-warning fs-2'>i<ins>Learn</ins></h1></Link>
         </div>
       </div>
       <div className="middle">
         <div className="home">
-          <p><Link to='/'>Home</Link></p>
+          <Link to='/'><p className='btn text-light m-0'>Home</p></Link>
         </div>
         <div className="fTeacher">
-          <p><Link to='/findTeacher'>Find Teacher</Link></p>
+          <Link to='/findTeacher'><p className='btn text-light m-0'>Find Teacher</p></Link>
         </div>
         <div className="exGroup">
-          <p><Link to='/exchangeGroup'>Exchange Group</Link></p>
+          <Link to='/exchangeGroup'><p className='btn text-light m-0'>Exchange Group</p></Link>
         </div>
-        <div className="InBoard">
-          <p><Link to='/board'>Interesting Board</Link></p>
+        <div className="InBoard d-flex justify-content-center align-items-center">
+          <Link to='/board'><p className='btn text-light m-0'>Interesting Board</p></Link>
         </div>
       </div>
       <div className="right">
         <div className="social">
-          <Link to='learnProfile'><i className="fab fa-facebook-square"></i></Link>
+          <i className="fab fa-facebook-square"></i>
           <i className="fab fa-instagram"></i>
           <i className="fab fa-twitter-square"></i>
         </div>
         <div className="messengerss">
           <i className="far fa-comment-dots"></i>
-          <p data-bs-toggle="modal" data-bs-target="#messengerBox">Messenger</p>
+          <p className='btn text-light' data-bs-toggle="modal" data-bs-target="#messengerBox">Messenger</p>
         </div>
         <div className="login">
-          <i className="far fa-user-circle"></i>
+          {user ?
+            <img src={user.profilePicture} alt="" className='profilePicturess' /> :
+            <i className="far fa-user-circle"></i>}
 
           {
             user ?
-              <p className="" data-bs-toggle="modal" data-bs-target="#userDropDown">{user.firstName}</p> :
-              <p className="" data-bs-toggle="modal" data-bs-target="#loginForm">Log in / Sign up</p>
+              <div className="btn text-light username me-1" data-bs-toggle="modal" data-bs-target="#userDropDown">{user.firstName}</div> :
+              <p className="btn text-light" data-bs-toggle="modal" data-bs-target="#loginForm">Log in / Sign up</p>
           }
 
         </div>

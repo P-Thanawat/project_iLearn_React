@@ -8,7 +8,7 @@ function LessonCard({ lessonOption }) {
   const leastLessonPrice = Math.min(...prices).toFixed(2)
   return (
     <div>
-      <div className="card p-4 mb-2">
+      <div className="card text-black border-warning border-2 p-4 mb-4 ">
         <h6>{lessonOption && lessonOption.data.data[0].lesson.lessonName}</h6>
         <div className="row">
           <div className="col-8">{lessonOption && lessonOption.data.data[0].lesson.lessonDetail}</div>

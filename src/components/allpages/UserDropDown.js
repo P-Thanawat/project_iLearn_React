@@ -4,11 +4,17 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../../contexts/AuthContext';
 import { removeToken } from '../../services/localStorage';
 import '../../css/userDropDown.css'
+import { ShowLessonFormContext } from '../../contexts/showLessonFormContext';
+import { TeacherFormContext } from '../../contexts/showTeacherFormContext';
 
-function UserDropDown() {
+
+
+function UserDropDown({ teacherProfile }) {
   const { user } = useContext(AuthContext);
+  const { showLessonForm, setShowLessonForm } = useContext(ShowLessonFormContext)
+  const { showTeacherForm, setShowTeacherForm } = useContext(TeacherFormContext)
   console.log(`user`, user)
-
+  console.log(`teacherProfile`, teacherProfile)
   const handleLogout = () => {
     removeToken();
     window.location.reload();
@@ -20,18 +26,26 @@ function UserDropDown() {
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-body">
-              <div className="d-flex justify-content-center align-items-center">
-                <img src={user.profilePicture} alt="profilePicture" className='profilePicture' />
-                <p className='badge bg-primary text-wrap'>{user.studentPoint}</p>
+              <div className="d-flex justify-content-center align-items-center mb-4 ms-5 mt-3">
+                <div className="d-flex justify-content-center align-items-center">
+                  <img src={user.profilePicture} alt="profilePicture" className='profilePicture' />
+                  <div className='d-flex flex-column '>
+                    <p className='badge bg-warning text-black text-wrap m-0 p-1'>{user.studentPoint} XP</p>
+                    <p className='badge bg-secondary text-light text-wrap m-0 p-1'>{user.typeAccount}</p>
+                  </div>
+                </div>
               </div>
-
-              <p>{user.firstName} {user.lastName}</p>
-              <p>{user.email}</p>
-              <p className='btn btn-success' data-bs-dismiss="modal"><Link to={`/learnProfile/${user.id}`}>My Profile</Link></p>
-              <p className='btn btn-success'>Account Setting</p>
-              <p className='btn btn-success' onClick={handleLogout}>Log out</p>
-            </div>
-            <div className="modal-footer">
+              <div className="d-flex justify-content-center align-items-center">
+                <p className='text-primary m-0'>{user.firstName} {user.lastName}</p>
+              </div>
+              <div className="d-flex justify-content-center align-items-center mb-4">
+                <p className='text-secondary m-0'>{user.email}</p>
+              </div>
+              <Link to={`/learnProfile/${user.id}`}><p className='btn btn-warning form-control' data-bs-dismiss="modal">My Profile</p></Link>
+              {(user.typeAccount === 'teacher' && !teacherProfile) && <p className='btn btn-warning form-control text-black' data-bs-dismiss="modal" onClick={() => setShowTeacherForm(true)}>Add Teacher Profile</p>}
+              {(user.typeAccount === 'teacher' && teacherProfile) && <p className='btn btn-warning form-control text-black' data-bs-dismiss="modal" onClick={() => setShowLessonForm(true)}>Add Lesson</p>}
+              <p className='btn btn-warning form-control'>Account Setting</p>
+              <p className='btn btn-danger form-control m-0' onClick={handleLogout}>Log out</p>
             </div>
           </div>
         </div>

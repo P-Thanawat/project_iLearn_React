@@ -4,6 +4,7 @@ import '../css/teacherProfile.css'
 import Header from '../components/allpages/Header'
 import LessonCard from '../components/teacherProfile/LessonCard'
 import ReviewCard from '../components/teacherProfile/ReviewCard'
+import StatisticChart from '../components/teacherProfile/StatisticChart'
 
 function TeacherProfile() {
   const [teacher, setTeacher] = useState({})
@@ -12,6 +13,10 @@ function TeacherProfile() {
   const [specialist, setSpecialist] = useState([])
   const [lessons, setLessons] = useState([])
   const [lessonOption, setLessonOption] = useState([])
+  const [reviews, setReviews] = useState([])
+  const [avgPoint, setAvgPoint] = useState(0)
+  const [lessonRecord, setLessonRecord] = useState([])
+  const [percentComplete, setPercentComplete] = useState([])
   useEffect(() => {
     const run = async () => {
       const teacherProfileId = window.location.href.split('/')[window.location.href.split('/').length - 1]
@@ -20,24 +25,73 @@ function TeacherProfile() {
       const { data: { data: specialist } } = await axios.get(`/teacherSubject/${teacherProfileId}`)
       const { data: { data: language } } = await axios.get(`/languageSpeak/${userAccount.id}`)
       const { data: { data: lessons } } = await axios.get(`/lessons/${teacherProfileId}`)
+      const { data: { data: lessonRecord } } = await axios.get(`/lessonsRecord/${teacherProfileId}`)
+
       const lessonOption = [];
       for (let i = 0; i <= lessons.length - 1; i++) {
-        console.log('forloop', i)
         const result = await axios.get(`/lessonOption/${lessons[i].id}`)
         lessonOption.push(result);
       }
+
+      const reviews = []
+      for (let i = 0; i <= lessons.length - 1; i++) {
+        const { data: { data: review } } = await axios.get(`/reviews/${lessons[i].id}`)
+        reviews.push(...review)
+      }
+      reviews.sort((a, b) => {
+        if (a.updatedAt > b.updatedAt) return -1;
+      })
+
+      let avgPoint = 0;
+      for (let i = 0; i <= reviews.length - 1; i++) {
+        avgPoint += +(reviews[i].reviewPoint)
+      }
+      avgPoint /= reviews.length;
+
+
+
+      const month = new Date().getUTCMonth()
+      console.log(`month`, month)
+      const preMonth = lessonRecord.filter(item => +item.startLearnTime.split('-')[1] === month - 1)
+      const thisMonth = lessonRecord.filter(item => +item.startLearnTime.split('-')[1] === month)
+      const nextMonth = lessonRecord.filter(item => +item.startLearnTime.split('-')[1] === month + 1)
+
+      const percentComplete = [];
+
+      [preMonth, thisMonth, nextMonth].forEach(item => {
+        const arrTemp = []
+        let temp = 0;
+        item.forEach((item) => {
+          if (item.completed) temp++;
+        })
+        arrTemp.push(temp);
+        temp = (temp / item.length) * 100;
+        arrTemp.push(temp || 0)
+        percentComplete.push(arrTemp)
+
+      })
+
       console.log(`teacher`, teacher)
       console.log(`userAccount`, userAccount)
       console.log(`language`, language)
       console.log(`specialist`, specialist)
       console.log(`lessons`, lessons)
       console.log(`lessonOption`, lessonOption)
+      console.log(`reviews`, reviews)
+      console.log(`lessonRecord`, lessonRecord)
+      console.log(`percentComplete`, percentComplete)
       setTeacher(teacher)
       setUserAccount(userAccount)
       setLanguage(language)
       setSpecialist(specialist)
       setLessons(lessons)
       setLessonOption(lessonOption)
+      setReviews(reviews)
+      setAvgPoint(avgPoint)
+      setLessonRecord(lessonRecord)
+      setPercentComplete(percentComplete)
+
+
     }
     run();
 
@@ -72,14 +126,30 @@ function TeacherProfile() {
               <p>{teacher.aboutTeacher}</p>
             </div>
             <div className="card p-4"> {/* lessons */}
-              <h5>Lessons</h5>
+              <h5 className='mb-4'>LESSONS</h5>
               {lessonOption.map((item, index) => (<LessonCard key={index} lessonOption={item} />))}
             </div>
             <div className="card p-4"> {/* static */}
-
+              <h5>STATISTIC</h5>
+              <StatisticChart percentComplete={percentComplete} />
             </div>
             <div className="card p-4"> {/* Reviews */}
-              <ReviewCard />
+              <div className="d-flex">
+                <h5 className='me-3'>REVIEWS</h5>
+                {avgPoint >= 1 && <img className='star' src="https://cdn-icons-png.flaticon.com/512/616/616489.png" alt="" />}
+                {avgPoint >= 2 && <img className='star' src="https://cdn-icons-png.flaticon.com/512/616/616489.png" alt="" />}
+                {avgPoint >= 3 && <img className='star' src="https://cdn-icons-png.flaticon.com/512/616/616489.png" alt="" />}
+                {avgPoint >= 4 && <img className='star' src="https://cdn-icons-png.flaticon.com/512/616/616489.png" alt="" />}
+                {avgPoint >= 5 && <img className='star' src="https://cdn-icons-png.flaticon.com/512/616/616489.png" alt="" />}
+                {avgPoint - Math.floor(avgPoint) > 0 && <img className='star' src="https://cdn-icons-png.flaticon.com/512/2107/2107737.png" alt="" />}
+                <div className='ms-2 d-flex'>
+                  <p className='text-success me-1 fw-bold'>{avgPoint}</p>
+                  <p>({reviews.length})</p>
+                </div>
+              </div>
+              {reviews.map(item => (
+                <ReviewCard key={item.id} reviews={item} />
+              ))}
             </div>
           </div>
           <div className="col-4 bg-warning">col-4</div>

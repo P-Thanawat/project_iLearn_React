@@ -1,5 +1,5 @@
 import './App.css';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { AuthContext } from './contexts/AuthContext';
 
@@ -26,6 +26,8 @@ import axios from './config/axios';
 import { TeacherFormContext } from './contexts/showTeacherFormContext';
 import TeacherForm from './components/allpages/TeacherForm';
 import AlertMessage from './components/allpages/AlertMessage';
+import LessonForm from './components/allpages/LessonForm';
+import { ShowLessonFormContext } from './contexts/showLessonFormContext';
 
 
 function App() {
@@ -34,22 +36,32 @@ function App() {
   const role = user ? 'user' : 'guest'
   const { showLearnerForm, setShowLearnerForm } = useContext(showLearnerFormContext)
   const { showTeacherForm, setShowTeacherForm } = useContext(TeacherFormContext)
+  const { showLessonForm, setShowLessonForm } = useContext(ShowLessonFormContext)
+  const [teacherProfile, setTeacherProfile] = useState('')
   useEffect(() => {
     const run = async () => {
       try {
         if (user) {
+          console.log(`user`, user)
           const { data: { data: teacherProfile } } = await axios.get(`/teacherProfile/byUserId/${user.id}`)
           const { data: { data: learnerProfile } } = await axios.get(`/learnerProfile/byUserId/${user.id}`)
+          const { data: { data: lessons } } = await axios.get(`/lessons/${teacherProfile?.id}`)
           console.log(`learnerProfile`, learnerProfile)
           console.log(`teacherProfile`, teacherProfile)
+          setTeacherProfile(teacherProfile)
+          console.log(`lessons`, lessons)
 
-          if (user.typeAccount === 'learner' && !learnerProfile) {
+          if (user.typeAccount === 'learner' && !learnerProfile) { //learner log in and don't have learnerProfile
             console.log('showLearn')
             setShowLearnerForm(true)
           }
-          if (user.typeAccount === 'teacher' && !teacherProfile) {
+          if (user.typeAccount === 'teacher' && !teacherProfile) { //teacher log in and don't have teacherProfile
             console.log('showTeacher')
             setShowTeacherForm(true)
+          }
+          if (user.typeAccount === 'teacher' && teacherProfile && lessons.length === 0) { //no lessons
+            console.log('showLessonForm')
+            setShowLessonForm(true)
           }
         }
       }
@@ -63,7 +75,7 @@ function App() {
 
     <div className="App">
 
-      {user && <UserDropDown />} {/* modal */}
+      {user && <UserDropDown teacherProfile={teacherProfile} />} {/* modal */}
       <RegisterForm /> {/* modal */}
       <LoginForm /> {/* modal */}
       <MoreInfo /> {/* modal */}
@@ -71,7 +83,8 @@ function App() {
       <MessengerBox /> {/* modal */}
       <LearnerForm /> {/* modal */}
       <TeacherForm /> {/* modal */}
-      <AlertMessage />
+      <AlertMessage /> {/* modal */}
+      <LessonForm /> {/* modal */}
       <Switch>
         <Route path='/findTeacher' component={FindTeacher} />
         <Route path='/exchangeGroup' component={Exchange} />
