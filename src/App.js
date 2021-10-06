@@ -28,6 +28,7 @@ import TeacherForm from './components/allpages/TeacherForm';
 import AlertMessage from './components/allpages/AlertMessage';
 import LessonForm from './components/allpages/LessonForm';
 import { ShowLessonFormContext } from './contexts/showLessonFormContext';
+import BookingLesson from './components/teacherProfile/BookingLesson';
 
 
 function App() {
@@ -85,6 +86,7 @@ function App() {
       <TeacherForm /> {/* modal */}
       <AlertMessage /> {/* modal */}
       <LessonForm /> {/* modal */}
+      <BookingLesson /> {/* modal */}
       <Switch>
         <Route path='/findTeacher' component={FindTeacher} />
         <Route path='/exchangeGroup' component={Exchange} />

@@ -7,21 +7,30 @@ import { ShowLearnerFormProvider } from './contexts/ShowLeanerFormContext';
 import { TeacherFormProvider } from './contexts/showTeacherFormContext'
 import { AlertMessageProvider } from './contexts/AlertMessageContext';
 import { ShowLessonFormProvider } from './contexts/showLessonFormContext';
+import { ShowBookingProvider } from './contexts/showBookingContext';
+import { SendDataFromTeacherProvider } from './contexts/SendDataFromTeacherContext';
+import { TableDataProvider } from './contexts/TableData';
 
 ReactDOM.render(
-  <ShowLessonFormProvider>
-    <AlertMessageProvider>
-      <TeacherFormProvider>
-        <ShowLearnerFormProvider>
-          <AuthContextProvider>
-            <BrowserRouter>
-              <App />
-            </BrowserRouter>
-          </AuthContextProvider>
-        </ShowLearnerFormProvider>
-      </TeacherFormProvider>
-    </AlertMessageProvider>
-  </ShowLessonFormProvider>
+  <TableDataProvider>
+    <SendDataFromTeacherProvider>
+      <ShowBookingProvider>
+        <ShowLessonFormProvider>
+          <AlertMessageProvider>
+            <TeacherFormProvider>
+              <ShowLearnerFormProvider>
+                <AuthContextProvider>
+                  <BrowserRouter>
+                    <App />
+                  </BrowserRouter>
+                </AuthContextProvider>
+              </ShowLearnerFormProvider>
+            </TeacherFormProvider>
+          </AlertMessageProvider>
+        </ShowLessonFormProvider>
+      </ShowBookingProvider>
+    </SendDataFromTeacherProvider>
+  </TableDataProvider>
   ,
   document.getElementById('root')
 );

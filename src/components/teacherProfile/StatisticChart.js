@@ -9,8 +9,6 @@ function StatisticChart({ percentComplete }) {
 
   const thisMonth = new Date().getMonth()
 
-  console.log(`thisMonth`, monthNames[thisMonth])
-
   const data = {
     labels: [`${monthNames[thisMonth - 1]} (${percentComplete?.[0]?.[1]}%)`, `${monthNames[thisMonth]} (${percentComplete?.[1]?.[1]}%)`, `${monthNames[thisMonth + 1]} (${percentComplete?.[2]?.[1]}%)`],
     datasets: [

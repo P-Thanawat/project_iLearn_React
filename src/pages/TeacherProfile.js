@@ -1,22 +1,30 @@
 import axios from '../config/axios'
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import '../css/teacherProfile.css'
 import Header from '../components/allpages/Header'
 import LessonCard from '../components/teacherProfile/LessonCard'
 import ReviewCard from '../components/teacherProfile/ReviewCard'
 import StatisticChart from '../components/teacherProfile/StatisticChart'
+import ChooseLesson from '../components/teacherProfile/ChooseLesson'
+import BookingLesson from '../components/teacherProfile/BookingLesson'
+import { SendDataFromTeacherContext } from '../contexts/SendDataFromTeacherContext'
 
 function TeacherProfile() {
   const [teacher, setTeacher] = useState({})
   const [userAccount, setUserAccount] = useState({})
   const [language, setLanguage] = useState([])
   const [specialist, setSpecialist] = useState([])
-  const [lessons, setLessons] = useState([])
+  // const [lessons, setLessons] = useState([])
+  const { lessons, setLessons } = useContext(SendDataFromTeacherContext)
   const [lessonOption, setLessonOption] = useState([])
   const [reviews, setReviews] = useState([])
   const [avgPoint, setAvgPoint] = useState(0)
   const [lessonRecord, setLessonRecord] = useState([])
   const [percentComplete, setPercentComplete] = useState([])
+  const [showChoosing, setShowChoosing] = useState(false);
+  const [showBooking, setShowBooking] = useState(false);
+  const [lessonIdForBooking, setLessonIdForBooking] = useState('')
+
   useEffect(() => {
     const run = async () => {
       const teacherProfileId = window.location.href.split('/')[window.location.href.split('/').length - 1]
@@ -100,6 +108,9 @@ function TeacherProfile() {
 
   return (
     <div>
+
+      <ChooseLesson showChoosing={showChoosing} setShowChoosing={setShowChoosing} lessonOption={lessonOption} setShowBooking={setShowBooking} /> {/*modal*/}
+
       <Header />
       <div className="container">
         <div className="row">
@@ -152,10 +163,92 @@ function TeacherProfile() {
               ))}
             </div>
           </div>
-          <div className="col-4 bg-warning">col-4</div>
+          <div className="col-4 bg-warning">
+            <div className="card p-4 m-2 mt-4"> {/* recommended lesson */}
+              <span>RECOMMENDED LESSONS</span>
+              <h5>{teacher.recommendLesson}</h5>
+              <button className='btn btn-danger mb-3 mt-2' onClick={() => setShowChoosing(true)}>BOOK NOW</button>
+              <button className='btn btn-secondary'>CONTACT TEACHER</button>
+            </div>
+            <div className="card p-4 m-2 d-flex justify-content-center align-items-center"> {/*  available time */}
+              <table className='availableTable'>
+                <tr>
+                  <td>#####</td>
+                  <td style={{ width: "10px" }}>Mon</td>
+                  <td style={{ width: "10px" }}>Tue</td>
+                  <td style={{ width: "10px" }}>Wed</td>
+                  <td style={{ width: "10px" }}>Thu</td>
+                  <td style={{ width: "10px" }}>Fri</td>
+                  <td style={{ width: "10px" }}>Sat</td>
+                  <td style={{ width: "10px" }}>Sun</td>
+                </tr>
+                <tr>
+                  <td>00-04</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>04-08</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>08-12</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>12-16</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>16-20</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>20-24</td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                  <td></td>
+                </tr>
+              </table>
+              <button className='btn btn-secondary mt-2 px-5'>CHECK AVAILABLE</button>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+    </div >
   )
 }
 
