@@ -10,27 +10,30 @@ import { ShowLessonFormProvider } from './contexts/showLessonFormContext';
 import { ShowBookingProvider } from './contexts/showBookingContext';
 import { SendDataFromTeacherProvider } from './contexts/SendDataFromTeacherContext';
 import { TableDataProvider } from './contexts/TableData';
+import { ModalProvider } from './contexts/ModalContext';
 
 ReactDOM.render(
-  <TableDataProvider>
-    <SendDataFromTeacherProvider>
-      <ShowBookingProvider>
-        <ShowLessonFormProvider>
-          <AlertMessageProvider>
-            <TeacherFormProvider>
-              <ShowLearnerFormProvider>
-                <AuthContextProvider>
-                  <BrowserRouter>
-                    <App />
-                  </BrowserRouter>
-                </AuthContextProvider>
-              </ShowLearnerFormProvider>
-            </TeacherFormProvider>
-          </AlertMessageProvider>
-        </ShowLessonFormProvider>
-      </ShowBookingProvider>
-    </SendDataFromTeacherProvider>
-  </TableDataProvider>
+  <ModalProvider >
+    <TableDataProvider>
+      <SendDataFromTeacherProvider>
+        <ShowBookingProvider>
+          <ShowLessonFormProvider>
+            <AlertMessageProvider>
+              <TeacherFormProvider>
+                <ShowLearnerFormProvider>
+                  <AuthContextProvider>
+                    <BrowserRouter>
+                      <App />
+                    </BrowserRouter>
+                  </AuthContextProvider>
+                </ShowLearnerFormProvider>
+              </TeacherFormProvider>
+            </AlertMessageProvider>
+          </ShowLessonFormProvider>
+        </ShowBookingProvider>
+      </SendDataFromTeacherProvider>
+    </TableDataProvider>
+  </ModalProvider>
   ,
   document.getElementById('root')
 );

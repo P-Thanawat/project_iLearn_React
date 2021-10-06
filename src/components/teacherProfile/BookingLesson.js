@@ -39,16 +39,16 @@ function BookingLesson() {
 
   return (
     <>
-      <Modal size="lg" show={showBooking} onHide={handleClose} >
+      <Modal size="lg" show={showBooking} onHide={handleClose} fullscreen='true' >
         <Modal.Header closeButton>
           <Modal.Title>Booking Lesson</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <span className='fw-bold'>Lesson: {lesson?.[0]?.lessonName}</span>
-          <button className={`btn ${chooseMonth === 0 ? 'btn-success' : ''}`} onClick={() => { setChooseMonth(0) }}>{monthNames[thisMonth - 2]}</button>
+          <span className='fw-bold mb-3'>Lesson: {lesson?.[0]?.lessonName}</span>
+          {/* <button className={`btn ${chooseMonth === 0 ? 'btn-success' : ''}`} onClick={() => { setChooseMonth(0) }}>{monthNames[thisMonth - 2]}</button>
           <button className={`btn ${chooseMonth === 1 ? 'btn-success' : ''}`} onClick={() => { setChooseMonth(1) }}>{monthNames[thisMonth - 1]}</button>
-          <button className={`btn ${chooseMonth === 2 ? 'btn-success' : ''}`} onClick={() => { setChooseMonth(2) }}>{monthNames[thisMonth]}</button>
-          <table className='availableTableOnBooking m-4'>
+          <button className={`btn ${chooseMonth === 2 ? 'btn-success' : ''}`} onClick={() => { setChooseMonth(2) }}>{monthNames[thisMonth]}</button> */}
+          {/* <table className='availableTableOnBooking m-4'>
             <tr>
               <td>#####</td>
               <td style={{ width: "10px" }}>Mon</td>
@@ -58,10 +58,10 @@ function BookingLesson() {
               <td style={{ width: "10px" }}>Fri</td>
               <td style={{ width: "10px" }}>Sat</td>
               <td style={{ width: "10px" }}>Sun</td>
-            </tr>
-            <MyCalendar />
-            {/* week = [27, 28, 29, 30, 1, 2, 3] */}
-            {/* {tableData?.[chooseMonth]?.[0].map((item, index) => ( //premonth
+            </tr> */}
+          <MyCalendar lesson={lesson} handleClose={handleClose} />
+          {/* week = [27, 28, 29, 30, 1, 2, 3] */}
+          {/* {tableData?.[chooseMonth]?.[0].map((item, index) => ( //premonth
               <tr>
                 <td>{`${minuteToTime(0 + 15 * (index))} - ${minuteToTime(0 + 15 * (index) + 15)}`}</td>
                 <td id={ }></td>
@@ -73,15 +73,10 @@ function BookingLesson() {
                 <td id={index + 5}></td>  
               </tr>
             ))}  */}
-          </table>
+          {/* </table> */}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Close
-          </Button>
-          <Button variant="danger" onClick={handleClose}>
-            BOOK
-          </Button>
+
         </Modal.Footer>
       </Modal>
     </>

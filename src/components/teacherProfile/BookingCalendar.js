@@ -1,181 +1,113 @@
-// import React from 'react'
-// import { Calendar, Views, dateFnsLocalizer } from 'react-big-calendar'
-import events from '../../services/events'
-// // import ExampleControlSlot from '../../services/ExampleControlSlot'
-// import format from 'date-fns/format'
-// import parse from 'date-fns/parse'
-// import startOfWeek from 'date-fns/startOfWeek'
-// import getDay from 'date-fns/getDay'
-// import enUS from 'date-fns/locale/en-US'
-
-// const locales = {
-//   'en-US': enUS,
-// }
-
-// const localizer = dateFnsLocalizer({
-//   format,
-//   parse,
-//   startOfWeek,
-//   getDay,
-//   locales,
-// })
-
-
-// const propTypes = {}
-
-// class Selectable extends React.Component {
-//   constructor(...args) {
-//     super(...args)
-
-//     this.state = { events }
-//   }
-
-//   handleSelect = ({ start, end }) => {
-//     const title = window.prompt('New Event name')
-//     if (title)
-//       this.setState({
-//         events: [
-//           ...this.state.events,
-//           {
-//             start,
-//             end,
-//             title,
-//           },
-//         ],
-//       })
-//   }
-
-//   render() {
-//     const { localizer } = this.props
-//     return (
-//       <>
-//         {/* <ExampleControlSlot.Entry waitForOutlet>
-//           <strong>
-//             Click an event to see more info, or drag the mouse over the calendar
-//             to select a date/time range.
-//           </strong>
-//         </ExampleControlSlot.Entry> */}
-//         <Calendar
-//           selectable
-//           localizer={localizer}
-//           events={this.state.events}
-//           defaultView={Views.WEEK}
-//           scrollToTime={new Date(1970, 1, 1, 6)}
-//           defaultDate={new Date(2015, 3, 12)}
-//           onSelectEvent={event => alert(event.title)}
-//           onSelectSlot={this.handleSelect}
-//         />
-//       </>
-//     )
-//   }
-// }
-
-// Selectable.propTypes = propTypes
-
-// export default Selectable
-
-// import * as BigCalendar from 'react-big-calendar'
-// import moment from 'moment'
-// import 'react-big-calendar/lib/css/react-big-calendar.css';
-
-// function MyCalendar(props) {
-
-//   const Event = {
-//     id: 0,
-//     title: 'All Day Event very long title',
-//     allDay: true,
-//     start: new Date(2015, 3, 0),
-//     end: new Date(2015, 3, 1),
-//   }
-
-//   moment.locale('en-GB');
-//   BigCalendar.momentLocalizer(moment);
-
-//   return (
-
-//     <BigCalendar
-//       // localizer={localizer}
-//       events={[
-//         {
-//           'title': 'My event',
-//           'allDay': false,
-//           'start': new Date(2018, 0, 1, 10, 0), // 10.00 AM
-//           'end': new Date(2018, 0, 1, 14, 0), // 2.00 PM 
-//         }
-//       ]}
-//       step={60}
-//       view='week'
-//       views={['week']}
-//       min={new Date(2008, 0, 1, 8, 0)} // 8.00 AM
-//       max={new Date(2008, 0, 1, 17, 0)} // Max will be 6.00 PM!
-//       date={new Date(2018, 0, 1)}
-//       startAccessor="start"
-//       endAccessor="end"
-//     />)
-
-// }
-
-// export default MyCalendar
-
-import React, { Component } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
-
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { AlertMessageContext } from "../../contexts/AlertMessageContext";
+import { AuthContext } from "../../contexts/AuthContext";
+import axios from '../../config/axios'
 
 const localizer = momentLocalizer(moment);
 
-class App extends Component {
-  state = {
-    events: [
-      {
-        start: moment().toDate([2021, 9, 10]),
-        end: moment()
-          .add(1, "days")
-          .toDate(),
-        title: "Some title"
-        // start: new Date(2021, 10, 9),
-        // end: new Date(2021, 10, 10),
-        // title: 'All Day Event very long title',
+function BookingCalendar({ lesson, handleClose }) {
+  const { showAlertMessage, setShowAlertMessage, messageText, setMessageText } = useContext(AlertMessageContext)
+  const [events, setEvents] = useState([])
+  const { user } = useContext(AuthContext)
 
-      }
-    ]
-  };
+  console.log(`lesson`, lesson)
 
-  handleSelect = ({ start, end }) => {
-    const title = window.prompt('New Event name')
+
+  const handleBook = async () => {
+    handleClose();
+    for (let i = 0; i <= events.length - 1; i++) {
+      await axios.post('/lessonsRecord', { startLearnTime: events?.[i]?.start, endLearnTime: events?.[i]?.end, completed: false, userAccountId: user?.id, lessonsId: lesson?.[0]?.id })
+    }
+  }
+
+
+
+  const handleSelect = async ({ start, end }) => {
+    // const title = window.prompt('New Event name')
     console.log(`start`, start)
     console.log(`end`, end)
-    console.log(`title`, title)
-    if (title)
-      this.setState({
-        events: [
-          ...this.state.events,
-          {
-            start,
-            end,
-            title,
-          },
-        ],
-      })
+    // console.log(`title`, title)
+    let IsRepeat = false;
+    events.forEach((item) => {
+      if (start >= item.start && start < item.end) {
+        console.log('start break');
+        IsRepeat = true;
+      }
+      if (end > item.start && end <= item.end) {
+        console.log('end break');
+        IsRepeat = true;
+      }
+      if (start < item.start && end > item.end) {
+        console.log('break');
+        IsRepeat = true;
+      }
+    })
+    console.log(`moment().add(1, "days").toDate()`, moment().add(1, "days").toDate())
+    if (!IsRepeat && start > moment().add(1, "days").toDate()) {
+      setEvents(cur => ([
+
+        {
+          start,
+          end,
+          title: '',
+          id: Date.now(),
+          lessonId: lesson?.[0]?.id,
+          userAccountId: user?.id
+        }, ...cur,
+      ]
+      ))
+
+
+    }
+    if (IsRepeat) {
+      setMessageText('You are re-choosing on your time')
+      setShowAlertMessage(true)
+      setTimeout(() => {
+        setShowAlertMessage(false)
+      }, 3000);
+    }
+    else if (!(start > moment().add(1, "days").toDate())) {
+      setMessageText('You cannot choose time that is in past or today. (for at least, next 24hr)')
+      setShowAlertMessage(true)
+      setTimeout(() => {
+        setShowAlertMessage(false)
+      }, 3000);
+    }
+
   }
 
-  render() {
-    console.log(this.state.events)
-    return (
-      <div className="App">
-        <Calendar
-          localizer={localizer}
-          defaultDate={new Date()}
-          defaultView="month"
-          events={this.state.events}
-          style={{ height: "100vh" }}
-          selectable
-          onSelectSlot={this.handleSelect}
-        />
-      </div>
-    );
+  const handleEvent = (event) => {
+    console.log(event)
+    setEvents(cur => cur.filter(item => item.id !== event.id))
   }
+  console.log(`events`, events)
+
+  return (
+    <div>
+      <Calendar
+        localizer={localizer}
+        defaultDate={new Date()}
+        defaultView="week"
+        events={events}
+        style={{ height: "100vh" }}
+        selectable
+        onSelectSlot={handleSelect}
+        onSelectEvent={handleEvent}
+        views={['agenda', 'week']}
+        step={15}
+        timeslots={1}
+      />
+      <div className="d-flex justify-content-end mt-3">
+        <button className='btn btn-secondary mx-2' onClick={handleClose}>Close</button>
+        <button className='btn btn-danger' onClick={handleBook}>BOOK</button>
+      </div>
+    </div>
+  );
+
 }
 
-export default App;
+
+export default BookingCalendar;

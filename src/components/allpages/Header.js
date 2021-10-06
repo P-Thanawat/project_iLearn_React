@@ -1,11 +1,13 @@
 import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import { AuthContext } from '../../contexts/AuthContext';
+import { ModalContext } from '../../contexts/ModalContext';
 import '../../css/header.css'
 
 
 function Header({ page }) {
   const { user } = useContext(AuthContext);
+  const { showLogin, setShowLogin, } = useContext(ModalContext)
 
   return (
 
@@ -53,7 +55,7 @@ function Header({ page }) {
           {
             user ?
               <div className="btn text-light username me-1" data-bs-toggle="modal" data-bs-target="#userDropDown">{user.firstName}</div> :
-              <p className="btn text-light" data-bs-toggle="modal" data-bs-target="#loginForm">Log in / Sign up</p>
+              <p className="btn text-light" onClick={() => setShowLogin(true)}>Log in / Sign up</p>
           }
 
         </div>

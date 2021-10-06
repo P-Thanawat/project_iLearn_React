@@ -14,8 +14,8 @@ function AlertMessage({ message }) {
     <>
 
       <Modal show={showAlertMessage} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Alert Message</Modal.Title>
+        <Modal.Header closeButton className='bg-warning'>
+          <Modal.Title >Alert Message</Modal.Title>
         </Modal.Header>
         <Modal.Body>{messageText}</Modal.Body>
         <Modal.Footer>

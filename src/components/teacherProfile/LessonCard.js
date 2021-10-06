@@ -1,19 +1,31 @@
 import React, { useContext } from 'react'
+import { AuthContext } from '../../contexts/AuthContext';
+import { ModalContext } from '../../contexts/ModalContext';
 import { showBookingContext } from '../../contexts/showBookingContext';
 
+
 function LessonCard({ lessonOption, setShowChoosing }) {
+  const { user } = useContext(AuthContext);
+  const { showBooking, setShowBooking, lessonIdforBooking, setLessonIdforBooking } = useContext(showBookingContext)
+  const { showLogin, setShowLogin } = useContext(ModalContext)
+
+
   const prices = [];
   for (let i = 0; i <= lessonOption.data.data.length - 1; i++) {
     prices.push(lessonOption.data.data[i].lessonPrice)
   }
   const leastLessonPrice = Math.min(...prices).toFixed(2)
 
-  const { showBooking, setShowBooking, lessonIdforBooking, setLessonIdforBooking } = useContext(showBookingContext)
 
   const handleShowBooking = () => {
     setShowChoosing(false)
-    setShowBooking(true)
-    setLessonIdforBooking(lessonOption.data.data[0].lessonsId)
+    if (user) {
+      setShowBooking(true)
+      setLessonIdforBooking(lessonOption.data.data[0].lessonsId)
+    }
+    else {
+      setShowLogin(true)
+    }
   }
   return (
     <div>
