@@ -5,6 +5,7 @@ import { setToken } from '../../services/localStorage'
 import jwtDecode from "jwt-decode";
 import { ModalContext } from '../../contexts/ModalContext';
 import { Button, Modal } from 'react-bootstrap';
+import { AlertMessageContext } from '../../contexts/AlertMessageContext';
 
 function LoginForm() {
   const [email, setEmail] = useState('')
@@ -15,15 +16,20 @@ function LoginForm() {
 
   const { setUser } = useContext(AuthContext)
   const { user } = useContext(AuthContext)
-
   const { showLogin, setShowLogin } = useContext(ModalContext)
-
+  const { showAlertMessage, setShowAlertMessage, messageText, setMessageText } = useContext(AlertMessageContext)
   const handleClose = () => setShowLogin(false);
   const handleShow = () => setShowLogin(true);
 
-
   const handleClickNext = async () => {
     const { data: { data: checkEmail } } = await axios.post('/checkEmail', { email })
+    if (!checkEmail) {
+      setMessageText('Email is not found')
+      setShowAlertMessage(true)
+      setTimeout(() => {
+        setShowAlertMessage(false)
+      }, 3000);
+    }
     if (checkEmail) {
       setButtonText('Log in')
       setHidePassword(false)

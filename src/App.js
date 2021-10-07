@@ -29,6 +29,9 @@ import AlertMessage from './components/allpages/AlertMessage';
 import LessonForm from './components/allpages/LessonForm';
 import { ShowLessonFormContext } from './contexts/showLessonFormContext';
 import BookingLesson from './components/teacherProfile/BookingLesson';
+import AvailableCalendar from './components/allpages/AvailableCalendar';
+import ReviewForm from './components/allpages/ReviewForm';
+import { ModalContext } from './contexts/ModalContext';
 
 
 function App() {
@@ -39,6 +42,10 @@ function App() {
   const { showTeacherForm, setShowTeacherForm } = useContext(TeacherFormContext)
   const { showLessonForm, setShowLessonForm } = useContext(ShowLessonFormContext)
   const [teacherProfile, setTeacherProfile] = useState('')
+  const { showReviewForm, setShowReviewForm } = useContext(ModalContext)
+  const [lessonsRecord, setLessonsRecord] = useState({})
+
+
   useEffect(() => {
     const run = async () => {
       try {
@@ -65,6 +72,22 @@ function App() {
             setShowLessonForm(true)
           }
         }
+
+        //* check review after finishing class
+        if (user) {
+          const { data: { data: lessonsRecordData } } = await axios.get('/lessonsRecord') //get data each user following by token
+          console.log(`lessonsRecordData`, lessonsRecordData)
+          lessonsRecordData.forEach(item => {
+            if ((item.endLearnTime < new Date().toISOString()) && item.completed === false) {
+              setLessonsRecord(item)
+              setShowReviewForm(true)
+
+            }
+          })
+
+        }
+
+
       }
       catch (err) {
         console.log(err.message)
@@ -87,6 +110,9 @@ function App() {
       <AlertMessage /> {/* modal */}
       <LessonForm /> {/* modal */}
       <BookingLesson /> {/* modal */}
+      <AvailableCalendar teacherProfile={teacherProfile} />
+      <ReviewForm lessonsRecord={lessonsRecord} />
+
       <Switch>
         <Route path='/findTeacher' component={FindTeacher} />
         <Route path='/exchangeGroup' component={Exchange} />

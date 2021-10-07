@@ -1,4 +1,5 @@
 import React, { useContext } from 'react'
+import { AlertMessageContext } from '../../contexts/AlertMessageContext';
 import { AuthContext } from '../../contexts/AuthContext';
 import { ModalContext } from '../../contexts/ModalContext';
 import { showBookingContext } from '../../contexts/showBookingContext';
@@ -8,6 +9,7 @@ function LessonCard({ lessonOption, setShowChoosing }) {
   const { user } = useContext(AuthContext);
   const { showBooking, setShowBooking, lessonIdforBooking, setLessonIdforBooking } = useContext(showBookingContext)
   const { showLogin, setShowLogin } = useContext(ModalContext)
+  const { showAlertMessage, setShowAlertMessage, messageText, setMessageText } = useContext(AlertMessageContext)
 
 
   const prices = [];
@@ -17,14 +19,21 @@ function LessonCard({ lessonOption, setShowChoosing }) {
   const leastLessonPrice = Math.min(...prices).toFixed(2)
 
 
-  const handleShowBooking = () => {
+  const handleShowBooking = () => { // show table
     setShowChoosing(false)
-    if (user) {
+    if (user && user.typeAccount === 'learner') {
       setShowBooking(true)
       setLessonIdforBooking(lessonOption.data.data[0].lessonsId)
     }
-    else {
+    else if (!user) {
       setShowLogin(true)
+    }
+    else if (!(user.typeAccount === 'learner')) {
+      setMessageText('You cannot book lesson. Only learner Account can book lesson.')
+      setShowAlertMessage(true)
+      setTimeout(() => {
+        setShowAlertMessage(false)
+      }, 3000);
     }
   }
   return (

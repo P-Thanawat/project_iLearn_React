@@ -35,7 +35,7 @@ function TableDataProvider({ children }) {
       tableInitial[2].push(minute)
     }
 
-    console.log(`tableInitial`, tableInitial)
+    // console.log(`tableInitial`, tableInitial)
     setTableData(tableInitial)
 
   }, [])

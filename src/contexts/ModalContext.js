@@ -9,6 +9,8 @@ function ModalProvider({ children }) {
   const [showLearnerForm, setShowLearnerForm] = useState(false)
   const [showBooking, setShowBooking] = useState(false)
   const [lessonIdforBooking, setLessonIdforBooking] = useState('')
+  const [showAvailableChoose, setShowAvailableChoose] = useState(false)
+  const [showReviewForm, setShowReviewForm] = useState(false)
 
 
   return <ModalContext.Provider value={{
@@ -17,7 +19,9 @@ function ModalProvider({ children }) {
     showLessonForm, setShowLessonForm,
     showLearnerForm, setShowLearnerForm,
     showBooking, setShowBooking,
-    lessonIdforBooking, setLessonIdforBooking
+    lessonIdforBooking, setLessonIdforBooking,
+    showAvailableChoose, setShowAvailableChoose,
+    showReviewForm, setShowReviewForm
   }}>{children}</ModalContext.Provider>
 }
 

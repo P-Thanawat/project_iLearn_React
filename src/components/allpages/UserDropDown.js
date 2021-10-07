@@ -6,6 +6,7 @@ import { removeToken } from '../../services/localStorage';
 import '../../css/userDropDown.css'
 import { ShowLessonFormContext } from '../../contexts/showLessonFormContext';
 import { TeacherFormContext } from '../../contexts/showTeacherFormContext';
+import { ModalContext } from '../../contexts/ModalContext';
 
 
 
@@ -13,6 +14,7 @@ function UserDropDown({ teacherProfile }) {
   const { user } = useContext(AuthContext);
   const { showLessonForm, setShowLessonForm } = useContext(ShowLessonFormContext)
   const { showTeacherForm, setShowTeacherForm } = useContext(TeacherFormContext)
+  const { showAvailableChoose, setShowAvailableChoose } = useContext(ModalContext)
   console.log(`user`, user)
   console.log(`teacherProfile`, teacherProfile)
   const handleLogout = () => {
@@ -41,10 +43,10 @@ function UserDropDown({ teacherProfile }) {
               <div className="d-flex justify-content-center align-items-center mb-4">
                 <p className='text-secondary m-0'>{user.email}</p>
               </div>
-              <Link to={`/learnProfile/${user.id}`}><p className='btn btn-warning form-control' data-bs-dismiss="modal">My Profile</p></Link>
-              {(user.typeAccount === 'teacher' && !teacherProfile) && <p className='btn btn-warning form-control text-black' data-bs-dismiss="modal" onClick={() => setShowTeacherForm(true)}>Add Teacher Profile</p>}
-              {(user.typeAccount === 'teacher' && teacherProfile) && <p className='btn btn-warning form-control text-black' data-bs-dismiss="modal" onClick={() => setShowLessonForm(true)}>Add Lesson</p>}
-              <p className='btn btn-warning form-control'>Account Setting</p>
+              <Link to={`/learnProfile/${user.id}`}><p className='btn btn-secondary form-control' data-bs-dismiss="modal">My Profile</p></Link>
+              {(user.typeAccount === 'teacher' && !teacherProfile) && <p className='btn btn-secondary form-control text-light' data-bs-dismiss="modal" onClick={() => setShowTeacherForm(true)}>Add Teacher Profile</p>}
+              {(user.typeAccount === 'teacher' && teacherProfile) && <p className='btn btn-secondary form-control text-light' data-bs-dismiss="modal" onClick={() => setShowLessonForm(true)}>Add Lesson</p>}
+              <p className='btn btn-secondary form-control' onClick={() => setShowAvailableChoose(true)}>Account Setting</p>
               <p className='btn btn-danger form-control m-0' onClick={handleLogout}>Log out</p>
             </div>
           </div>

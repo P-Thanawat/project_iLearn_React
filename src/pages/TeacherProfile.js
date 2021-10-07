@@ -154,7 +154,7 @@ function TeacherProfile() {
                 {avgPoint >= 5 && <img className='star' src="https://cdn-icons-png.flaticon.com/512/616/616489.png" alt="" />}
                 {avgPoint - Math.floor(avgPoint) > 0 && <img className='star' src="https://cdn-icons-png.flaticon.com/512/2107/2107737.png" alt="" />}
                 <div className='ms-2 d-flex'>
-                  <p className='text-success me-1 fw-bold'>{avgPoint}</p>
+                  <p className='text-success me-1 fw-bold'>{avgPoint.toFixed(2)}</p>
                   <p>({reviews.length})</p>
                 </div>
               </div>
@@ -171,7 +171,7 @@ function TeacherProfile() {
               <button className='btn btn-secondary'>CONTACT TEACHER</button>
             </div>
             <div className="card p-4 m-2 d-flex justify-content-center align-items-center"> {/*  available time */}
-              <table className='availableTable'>
+              {/* <table className='availableTable'>
                 <tr>
                   <td>#####</td>
                   <td style={{ width: "10px" }}>Mon</td>
@@ -242,7 +242,7 @@ function TeacherProfile() {
                   <td></td>
                   <td></td>
                 </tr>
-              </table>
+              </table> */}
               <button className='btn btn-secondary mt-2 px-5'>CHECK AVAILABLE</button>
             </div>
           </div>

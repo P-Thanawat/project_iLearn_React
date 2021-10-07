@@ -14,7 +14,7 @@ function BookingLesson() {
   const [chooseMonth, setChooseMonth] = useState(1)
 
   const lesson = lessons.filter(item => item.id === lessonIdforBooking)
-  console.log(`thisLesson`, lesson)
+  // console.log(`thisLesson`, lesson)
 
   const handleClose = () => setShowBooking(false);
   const handleShow = () => setShowBooking(true);
@@ -34,7 +34,7 @@ function BookingLesson() {
   firstDay[0] = new Date(thisYear, thisMonth - 2, 1).toDateString().split(' ')[0] //check what first day is
   firstDay[1] = new Date(thisYear, thisMonth - 1, 1).toDateString().split(' ')[0] //check what first day is
   firstDay[2] = new Date(thisYear, thisMonth, 1).toDateString().split(' ')[0] //check what first day is
-  console.log(`firstDay`, firstDay)
+  // console.log(`firstDay`, firstDay)
 
 
   return (
