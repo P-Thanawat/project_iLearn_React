@@ -45,6 +45,12 @@ function AvailableCalendar({ teacherProfile }) {
     for (let i = 0; i <= events.length - 1; i++) {
       await axios.post('/available', { startAvailableTime: events?.[i]?.start, endAvailableTime: events?.[i]?.end, teacherProfileId: teacherProfile.id })
     }
+    setMessageText('Setting Available Time Successful')
+    setShowAlertMessage(true)
+    setTimeout(() => {
+      setShowAlertMessage(false)
+    }, 3000);
+
   }
 
 

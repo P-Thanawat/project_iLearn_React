@@ -57,7 +57,7 @@ function App() {
           console.log(`learnerProfile`, learnerProfile)
           console.log(`teacherProfile`, teacherProfile)
           setTeacherProfile(teacherProfile)
-          console.log(`lessons`, lessons)
+          // console.log(`lessons`, lessons)
 
           if (user.typeAccount === 'learner' && !learnerProfile) { //learner log in and don't have learnerProfile
             console.log('showLearn')
@@ -76,7 +76,7 @@ function App() {
         //* check review after finishing class
         if (user) {
           const { data: { data: lessonsRecordData } } = await axios.get('/lessonsRecord') //get data each user following by token
-          console.log(`lessonsRecordData`, lessonsRecordData)
+          // console.log(`lessonsRecordData`, lessonsRecordData)
           lessonsRecordData.forEach(item => {
             if ((item.endLearnTime < new Date().toISOString()) && item.completed === false) {
               setLessonsRecord(item)

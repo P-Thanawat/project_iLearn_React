@@ -13,6 +13,9 @@ function LearnerForm() {
   const [thirdLanguage, setThirdLanguage] = useState('')
   const { user } = useContext(AuthContext)
   const { showAlertMessage, setShowAlertMessage, messageText, setMessageText } = useContext(AlertMessageContext)
+  const [firstSkillTag, setFirstSkillTag] = useState('')
+  const [secondskillTag, setSecondSkillTag] = useState('')
+  const [thirdskillTag, setThirdSkillTag] = useState('')
 
   const handleClose = () => setShowLearnerForm(false);
   const handleShow = () => setShowLearnerForm(true);
@@ -21,10 +24,14 @@ function LearnerForm() {
     try {
       e.preventDefault();
       handleClose();
-      const learner = await axios.post('/learnerProfile', { learnerAboutMe })
+      const { data: { data: learner } } = await axios.post('/learnerProfile', { learnerAboutMe })
+      console.log(`learner`, learner)
       const languageData = await axios.post('/languageSpeak', { language })
       secondLanguage && await axios.post('/languageSpeak', { language: secondLanguage })
       thirdLanguage && await axios.post('/languageSpeak', { language: thirdLanguage })
+      firstSkillTag && await axios.post('/learnerSkill', { skill: firstSkillTag, learnerProfileId: learner.id })
+      secondskillTag && await axios.post('/learnerSkill', { skill: secondskillTag, learnerProfileId: learner.id })
+      thirdskillTag && await axios.post('/learnerSkill', { skill: thirdskillTag, learnerProfileId: learner.id })
 
       if (learner && languageData) {
         console.log('Create Learner Profile Successful')
@@ -65,6 +72,21 @@ function LearnerForm() {
               <div className="input-group mb-3">
                 <label htmlFor="" className='input-group-text'>Speak Language 3</label>
                 <input type="text" className='form-control' value={thirdLanguage} onChange={e => setThirdLanguage(e.target.value)} />
+              </div>
+            }
+            <div className="input-group mb-1">
+              <label htmlFor="" className='input-group-text'>Skill Tag 1</label>
+              <input type="text" className='form-control' value={firstSkillTag} onChange={e => setFirstSkillTag(e.target.value)} />
+            </div>
+            {firstSkillTag &&
+              <div className="input-group mb-1">
+                <label htmlFor="" className='input-group-text'>Skill Tag 2</label>
+                <input type="text" className='form-control' value={secondskillTag} onChange={e => setSecondSkillTag(e.target.value)} />
+              </div>}
+            {secondskillTag &&
+              <div className="input-group mb-3">
+                <label htmlFor="" className='input-group-text'>Skill Tag 3</label>
+                <input type="text" className='form-control' value={thirdskillTag} onChange={e => setThirdSkillTag(e.target.value)} />
               </div>
             }
             <button type="submit" className='btn btn-success float-end'>Confirm</button>

@@ -2,3 +2,44 @@
   height: 100px;
   width: 100px;
 }
+.learnerProfilePicture {
+  height: 200px;
+  width: 200px;
+  border-radius: 50%;
+}
+.completedLessonLearnerProfilePicture {
+  height: 80px;
+  width: 80px;
+  border-radius: 50%;
+}
+
+.postToolUserPostPicture {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+}
+
+input[type="file"] {
+  display: none;
+}
+
+.postLearnProfileFileInput {
+  border: 1px solid #ccc;
+  display: inline-block;
+  padding: 6px 12px;
+  cursor: pointer;
+  background-color: rgb(187, 188, 189);
+  width: 100%;
+  text-align: center;
+}
+
+.postUserProfilePicture {
+  height: 50px;
+  width: 50px;
+  border-radius: 50%;
+}
+
+.postContentPicture {
+  width: 100%;
+  max-height: 1000px;
+}

@@ -16,7 +16,7 @@ function LoginForm() {
 
   const { setUser } = useContext(AuthContext)
   const { user } = useContext(AuthContext)
-  const { showLogin, setShowLogin } = useContext(ModalContext)
+  const { showLogin, setShowLogin, showRegisterForm, setShowRegisterForm } = useContext(ModalContext)
   const { showAlertMessage, setShowAlertMessage, messageText, setMessageText } = useContext(AlertMessageContext)
   const handleClose = () => setShowLogin(false);
   const handleShow = () => setShowLogin(true);
@@ -41,6 +41,12 @@ function LoginForm() {
       setUser(jwtDecode(result.data.token))
       window.location.reload()
     }
+  }
+
+  const handleClinkRegister = e => {
+    e.preventDefault();
+    setShowLogin(false)
+    setShowRegisterForm(true)
   }
 
 
@@ -82,7 +88,7 @@ function LoginForm() {
         </Modal.Body>
         <Modal.Footer>
           <div className="modal-footer d-flex align-items-center">
-            <span  >Or <a href="" className='link-primary ' data-bs-toggle="modal" data-bs-target="#registerForm" >CLICK HERE</a> to create your free account.</span>
+            <span  >Or <a href="" className='link-primary' onClick={handleClinkRegister}>CLICK HERE</a> to create your free account.</span>
           </div>
         </Modal.Footer>
       </Modal>

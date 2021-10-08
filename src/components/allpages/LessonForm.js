@@ -2,6 +2,7 @@ import axios from 'axios';
 import React, { useContext, useState } from 'react'
 import { Button, Modal } from 'react-bootstrap';
 import { AlertMessageContext } from '../../contexts/AlertMessageContext';
+import { ModalContext } from '../../contexts/ModalContext';
 import { ShowLessonFormContext } from '../../contexts/showLessonFormContext';
 import AvailableCalendar from './AvailableCalendar';
 
@@ -17,6 +18,7 @@ function LessonForm() {
   const [promotionPrice, setPromotionPrice] = useState([])
   const [isShowPromotion, setIsShowPromotion] = useState([false, false, false])
   const { showAlertMessage, setShowAlertMessage, messageText, setMessageText } = useContext(AlertMessageContext)
+  const { setShowAvailableChoose } = useContext(ModalContext)
 
 
   const handleChangePicture = e => {
@@ -65,7 +67,7 @@ function LessonForm() {
   }
 
   const handleChooseAvailable = () => {
-
+    setShowAvailableChoose(true)
   }
 
 
@@ -185,7 +187,7 @@ function LessonForm() {
             }
             <div className="input-group mb-3">
               <label htmlFor="" className="input-group-text">Choose available lesson time</label>
-              <button class="btn btn-success" onClick={handleChooseAvailable}>Choose</button>
+              <button class="btn btn-success" type="button" onClick={handleChooseAvailable}>Choose</button>
             </div>
             <div className="input-group mb-3 d-flex justify-content-end">
               <Button variant="primary" type="submit" data-bs-dismiss="modal">Save</Button>
