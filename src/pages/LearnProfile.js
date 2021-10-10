@@ -6,6 +6,7 @@ import { useEffect } from 'react/cjs/react.development'
 import Header from '../components/allpages/Header'
 import { AuthContext } from '../contexts/AuthContext'
 import '../css/learnerProfile.css'
+import { ModalContext } from '../contexts/ModalContext'
 
 function LearnProfile() {
   const userId = window.location.href.split('/')[window.location.href.split('/').length - 1]
@@ -17,6 +18,19 @@ function LearnProfile() {
   const [learnSkill, setLearnSkill] = useState([])
   const [finishedLessonRecord, setFinishedLessonRecord] = useState([])
   const { user } = useContext(AuthContext)
+  const [contentText, setContentText] = useState('')
+  const [contentPicture, setContentPicture] = useState('')
+  const [refresh, setRefresh] = useState(false)
+  const [postLike, setPostLike] = useState([])
+  const [userPostLike, setUserPostLike] = useState([])
+  const { showLogin, setShowLogin, } = useContext(ModalContext)
+  const [editPicture, setEditPicture] = useState('')
+  const [IsShowComment, setIsShowComment] = useState([])
+  const [IsShowCommentReply, setIsShowCommentReply] = useState([])
+  const [comment, setComment] = useState('')
+  const [postComment, setPostComment] = useState([])
+  const [commentReply, setCommentReply] = useState('')
+
 
 
   useEffect(() => {
@@ -28,9 +42,23 @@ function LearnProfile() {
       const { data: { data: follower } } = await axios.get(`/follower/${learnProfile?.id}`)
       const { data: { data: learnSkill } } = await axios.get(`/learnerSkill/${learnProfile?.id}`)
       const { data: { data: lessonsRecord } } = await axios.get(`/lessonsRecord/byUserAccountId/${userId}`)
-      const { data: { data: postComment } } = await axios.get(`/postComment/${profilePost.id}`)
+      const { data: { data: postComment } } = await axios.get(`/postComment/${learnProfile?.id}`)
+
 
       const finishedLessonRecord = lessonsRecord.filter(item => item.completed === true)
+
+      const IsShowComment = {}
+      profilePost.forEach(item => {
+        IsShowComment[item.id] = false;
+      })
+
+      const IsShowCommentReply = {}
+      postComment.forEach(item => {
+        IsShowCommentReply[item.id] = false;
+      })
+
+      profilePost.sort((a, b) => b.id - a.id)
+
 
       console.log(`learnUser`, learnUser)
       console.log(`learnProfile`, learnProfile)
@@ -41,6 +69,10 @@ function LearnProfile() {
       console.log(`lessonsRecord`, lessonsRecord)
       console.log(`finishedLessonRecord`, finishedLessonRecord)
       console.log(`postComment`, postComment)
+      console.log(`IsShowComment`, IsShowComment)
+      console.log(`IsShowCommentReply`, IsShowCommentReply)
+
+
       setLearnUser(learnUser)
       setLearnProfile(learnProfile)
       setProfilePost(profilePost)
@@ -48,17 +80,107 @@ function LearnProfile() {
       setFollower(follower)
       setLearnSkill(learnSkill)
       setFinishedLessonRecord(finishedLessonRecord)
+      setIsShowComment(IsShowComment);
+      setPostComment(postComment)
+      setIsShowCommentReply(IsShowCommentReply)
+
 
     }
     run();
   }, [])
 
+  useEffect(() => {
+    const run = async () => {
+      const { data: { data: postLike } } = await axios.get(`/postLike/${learnProfile?.id}`)
+      const userPostLike = postLike.filter(item => item.userAccountId === user?.id)
+      console.log(`postLike`, postLike)
+      console.log(`userPostLike`, userPostLike)
+      setPostLike(postLike)
+      setUserPostLike(userPostLike)
+
+    }
+    run()
+  }, [learnProfile, refresh])
+
+  const handleFile = e => {
+    e.preventDefault();
+    setContentPicture(e.target.files[0])
+  }
+
+  const handlePost = async () => {
+    const formData = new FormData();
+    formData.append('postContent', contentText)
+    formData.append('postPicture', contentPicture)
+    formData.append('learnerProfileId', learnProfile.id)
+    formData.append('userAccountId', user.id)
+    console.log(`formData`, formData)
+    await axios.post('/profilePost', formData)
+    window.location.reload()
+  }
+
+  const handleLike = async (profilePostId) => {
+    if (user) {
+      await axios.post('/postLike', { userAccountId: user.id, profilePostId })
+      setRefresh(cur => !cur);
+    }
+    else {
+      setShowLogin(true)
+    }
+  }
+
+  const handleDisLike = async (profilePostId) => {
+    if (user) {
+      await axios.delete(`/postLike/${profilePostId}`)
+      setRefresh(cur => !cur);
+    }
+
+  }
+
+  const handleChangeProfilePicture = e => {
+    // e.preventDefault()
+    // setEditPicture(e.target.files[0])
+    e.preventDefault();
+    setEditPicture(e.target.files[0])
+
+  }
+
+  useEffect(() => {
+    const run = async () => {
+      if (editPicture) {
+        const formData = new FormData()
+        formData.append('profilePicture', editPicture)
+        await axios.put('/userAccount', formData)
+        window.location.reload()
+      }
+    }
+    run()
+
+  }, [editPicture])
+
+  const handleShowComment = (postId) => {
+    const obj = {}
+    for (const [key, value] of Object.entries(IsShowComment)) {
+      obj[key] = false
+    }
+    setIsShowComment(cur => ({ obj, [postId]: true }))
+  }
+
+  const handleComment = async (postId) => {
+    await axios.post('/postComment', { commentContent: comment, profilePostId: postId })
+  }
+
+  const handleShowCommentReply = (postCommentId) => {
+    const obj = {}
+    for (const [key, value] of Object.entries(IsShowCommentReply)) {
+      obj[key] = false
+    }
+    setIsShowCommentReply(cur => ({ obj, [postCommentId]: true }))
+  }
 
   const month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 
-
   return (
-    <div>
+    <div className='learnProfilePage'>
       <Header />
       <div className="row">
         <div className="col-6">
@@ -66,6 +188,12 @@ function LearnProfile() {
             <div className="mb-4 d-flex">
               <div className="">
                 <img className='learnerProfilePicture' src={learnUser.profilePicture} alt="" />
+                {user?.id === learnUser?.id &&
+                  <label className="btn btn-info opacity-50 text-light rounded-circle editPicture">
+                    <input onChange={handleChangeProfilePicture} className='inputChangeProfilePicture' type="file" />
+                    +
+                  </label>
+                }
               </div>
               <div className="">
                 <h2>{learnUser.firstName} {learnUser.lastName}</h2>
@@ -126,19 +254,20 @@ function LearnProfile() {
             <div className="d-flex ">
               <img className='postToolUserPostPicture' src={user.profilePicture} alt="" />
               <div className='d-flex flex-column mx-2 w-75'>
-                <textarea className='mb-2' type="text" rows="4" cols="50" placeholder={`What's on your mind, ${user.firstName}`} />
+                <textarea value={contentText} onChange={e => setContentText(e.target.value)} className='mb-2' type="text" rows="4" cols="50" placeholder={`What's on your mind, ${user.firstName}`} />
                 <div className="mb-3">
-                  <label className="postLearnProfileFileInput">
-                    <input type="file" />
+                  <label className="postLearnProfileFileInput rounded-pill">
+                    <input onChange={handleFile} className='inputFileCustom' type="file" />
                     PHOTO
                   </label>
+                  <button onClick={handlePost} className='btn btn-primary w-100 my-2 rounded-pill'>POST</button>
                 </div>
               </div>
             </div>
           </div>}
           {profilePost.map(item => (
             <div className="card p-4" key={item.id}> {/*post*/}
-              <div className="card"> {/*user post*/}
+              <div className=""> {/*user post*/}
                 <div className="d-flex justify-content-start align-items-center">
                   <img className='postUserProfilePicture' src={item.postUser.profilePicture} alt="" />
                   <div className='d-flex flex-column'>
@@ -147,17 +276,56 @@ function LearnProfile() {
                   </div>
                 </div>
               </div>
-              <div className="card my-2"> {/*content post*/}
+              <div className=" my-2"> {/*content post*/}
                 <span>{item.postContent}</span>
-                {item.postUser.profilePicture && <img className='postContentPicture' src={item.postUser.profilePicture} alt="" />}
+                {item.postPicture && <img className='postContentPicture my-2' src={item.postPicture} alt="" />}
               </div>
               <div className="d-flex align-items-center"> {/*like post*/}
-                {/* <button className='btn btn-danger'>LIKE</button> */}
-                <img style={{ width: '30px' }} src="https://cdn-icons-png.flaticon.com/512/2107/2107845.png" alt="" />
-                <img style={{ width: '30px' }} src="https://cdn-icons-png.flaticon.com/512/2107/2107952.png" alt="" />
-                <span className='mx-2 fw-bold'>{item.postLike}</span>
+                {userPostLike.find(itemP => itemP.profilePostId === item.id) ?
+                  <img onClick={() => handleDisLike(item.id)} style={{ width: '30px' }} src="https://cdn-icons-png.flaticon.com/512/2107/2107845.png" alt="" /> :
+                  <img onClick={() => handleLike(item.id)} style={{ width: '30px' }} src="https://cdn-icons-png.flaticon.com/512/2107/2107952.png" alt="" />
+                }
+
+                <span className='mx-2 fw-bold'>{postLike.filter(itemP => itemP.profilePostId === item.id).length}</span>
               </div>
-              <div className="card"> {/*comment post*/}
+              <div className='my-2'> {/*comment post*/}
+                {!IsShowComment[item.id] && <button onClick={() => handleShowComment(item.id)} className='w-100 btn border'>Comment</button>}
+
+                {IsShowComment[item.id] &&
+                  <div className=""> {/*comment tool*/}
+                    <div className='d-flex mb-3'>
+                      <img style={{ width: '40px', height: '40px', borderRadius: '50%' }} src={user.profilePicture} alt="" />
+                      <input value={comment} onChange={e => setComment(e.target.value)} className='ms-1 w-100 border-none' type="text" placeholder={`Write a comment...`} />
+                      <button onClick={() => handleComment(item.id)} className='buttonSendMessage'><i className="fa fa-paper-plane"></i></button>
+                    </div >
+                    <div>
+                      {postComment.filter(itemP => itemP.profilePostId === item.id).map(itemP => (
+                        <>
+                          <div className="d-flex">
+                            <img src={itemP.userAccount.profilePicture} style={{ width: '40px', height: '40px', borderRadius: '50%' }} alt="" />
+                            <div className="d-flex flex-column align-items-end">
+                              <div className='d-flex flex-column card p-2 mx-2'>
+                                <span className='fw-bold'>{itemP.userAccount.firstName} {itemP.userAccount.lastName}</span>
+                                <span className=''>{itemP.commentContent}</span>
+                              </div>
+                              <span onClick={() => handleShowCommentReply(itemP.id)} style={{ fontSize: '14px' }} className='mb-2 mx-2'>Reply</span>
+                            </div>
+                          </div>
+                          {IsShowCommentReply[itemP.id] &&
+
+
+                            <div className='d-flex mb-3 ms-5'>
+                              <img style={{ width: '30px', height: '30px', borderRadius: '50%' }} src={user.profilePicture} alt="" />
+                              <input value={commentReply} onChange={e => setCommentReply(e.target.value)} className='ms-1 w-100 border-none' type="text" placeholder={`Write a comment...`} />
+                              <button onClick={() => handleComment(itemP.id)} className='buttonSendMessage'><i className="fa fa-paper-plane"></i></button>
+                            </div >
+                          }
+                        </>
+                      ))}
+                    </div>
+
+                  </div >
+                }
 
               </div>
             </div>

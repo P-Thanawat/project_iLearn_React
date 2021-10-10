@@ -15,7 +15,7 @@ import Messenger from './pages/Messager';
 import Payment from './pages/Payment';
 import TeacherProfile from './pages/TeacherProfile';
 import UserDropDown from './components/allpages/UserDropDown';
-import RegisterForm from './components/homepage/RegisterForm';
+import RegisterForm from './components/allpages/RegisterForm';
 import LoginForm from './components/allpages/LoginForm';
 import MoreInfo from './components/homepage/MoreInfo';
 import Hamburger from './components/homepage/Hamburger';
@@ -110,8 +110,8 @@ function App() {
       <AlertMessage /> {/* modal */}
       <LessonForm /> {/* modal */}
       <BookingLesson /> {/* modal */}
-      <AvailableCalendar teacherProfile={teacherProfile} />
-      <ReviewForm lessonsRecord={lessonsRecord} />
+      <AvailableCalendar teacherProfile={teacherProfile} /> {/* modal */}
+      <ReviewForm lessonsRecord={lessonsRecord} /> {/* modal */}
 
       <Switch>
         <Route path='/findTeacher' component={FindTeacher} />

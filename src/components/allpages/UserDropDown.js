@@ -43,7 +43,7 @@ function UserDropDown({ teacherProfile }) {
               <div className="d-flex justify-content-center align-items-center mb-4">
                 <p className='text-secondary m-0'>{user.email}</p>
               </div>
-              <Link to={`/learnProfile/${user.id}`}><p className='btn btn-secondary form-control' data-bs-dismiss="modal">My Profile</p></Link>
+              <Link to={`/learnProfile/${user.id}`}><p onClick={() => window.location.reload()} className='btn btn-secondary form-control' data-bs-dismiss="modal">My Profile</p></Link>
               {(user.typeAccount === 'teacher' && !teacherProfile) && <p className='btn btn-secondary form-control text-light' data-bs-dismiss="modal" onClick={() => setShowTeacherForm(true)}>Add Teacher Profile</p>}
               {(user.typeAccount === 'teacher' && teacherProfile) && <p className='btn btn-secondary form-control text-light' data-bs-dismiss="modal" onClick={() => setShowLessonForm(true)}>Add Lesson</p>}
               <p className='btn btn-secondary form-control' onClick={() => setShowAvailableChoose(true)}>Account Setting</p>

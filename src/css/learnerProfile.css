@@ -19,7 +19,7 @@
   border-radius: 50%;
 }
 
-input[type="file"] {
+.inputFileCustom {
   display: none;
 }
 
@@ -42,4 +42,24 @@ input[type="file"] {
 .postContentPicture {
   width: 100%;
   max-height: 1000px;
+}
+
+.editPicture {
+  position: absolute;
+  top: 30px;
+  right: 240px;
+}
+
+.inputChangeProfilePicture {
+  display: none;
+}
+
+.learnProfilePage .buttonSendMessage {
+  background: none;
+  border: none;
+}
+.learnProfilePage .buttonSendMessage:hover {
+  background: rgb(144, 196, 248);
+  border: none;
+  border-radius: 20%;
 }
