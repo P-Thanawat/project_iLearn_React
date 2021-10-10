@@ -30,6 +30,8 @@ function LearnProfile() {
   const [comment, setComment] = useState('')
   const [postComment, setPostComment] = useState([])
   const [commentReply, setCommentReply] = useState('')
+  const [refreshComment, setRefreshComment] = useState(false)
+  const [postCommentReply, setPostCommentReply] = useState([])
 
 
 
@@ -42,7 +44,7 @@ function LearnProfile() {
       const { data: { data: follower } } = await axios.get(`/follower/${learnProfile?.id}`)
       const { data: { data: learnSkill } } = await axios.get(`/learnerSkill/${learnProfile?.id}`)
       const { data: { data: lessonsRecord } } = await axios.get(`/lessonsRecord/byUserAccountId/${userId}`)
-      const { data: { data: postComment } } = await axios.get(`/postComment/${learnProfile?.id}`)
+
 
 
       const finishedLessonRecord = lessonsRecord.filter(item => item.completed === true)
@@ -68,7 +70,6 @@ function LearnProfile() {
       console.log(`learnSkill`, learnSkill)
       console.log(`lessonsRecord`, lessonsRecord)
       console.log(`finishedLessonRecord`, finishedLessonRecord)
-      console.log(`postComment`, postComment)
       console.log(`IsShowComment`, IsShowComment)
       console.log(`IsShowCommentReply`, IsShowCommentReply)
 
@@ -81,7 +82,7 @@ function LearnProfile() {
       setLearnSkill(learnSkill)
       setFinishedLessonRecord(finishedLessonRecord)
       setIsShowComment(IsShowComment);
-      setPostComment(postComment)
+
       setIsShowCommentReply(IsShowCommentReply)
 
 
@@ -101,6 +102,18 @@ function LearnProfile() {
     }
     run()
   }, [learnProfile, refresh])
+
+  useEffect(() => {
+    const run = async () => {
+      const { data: { data: postComment } } = await axios.get(`/postComment/${learnProfile?.id}`)
+      const { data: { data: postCommentReply } } = await axios.get(`/commentReply/${learnProfile?.id}`)
+      console.log(`postComment`, postComment)
+      console.log(`postCommentReply`, postCommentReply)
+      setPostComment(postComment)
+      setPostCommentReply(postCommentReply)
+    }
+    run()
+  }, [learnProfile, refreshComment])
 
   const handleFile = e => {
     e.preventDefault();
@@ -167,6 +180,8 @@ function LearnProfile() {
 
   const handleComment = async (postId) => {
     await axios.post('/postComment', { commentContent: comment, profilePostId: postId })
+    setRefreshComment(cur => !cur)
+
   }
 
   const handleShowCommentReply = (postCommentId) => {
@@ -175,6 +190,12 @@ function LearnProfile() {
       obj[key] = false
     }
     setIsShowCommentReply(cur => ({ obj, [postCommentId]: true }))
+  }
+
+  const handleCommentReply = async (postCommentId) => {
+    await axios.post('/commentReply', { commentReplyContent: commentReply, postCommentId: postCommentId })
+    setRefreshComment(cur => !cur)
+    setCommentReply('')
   }
 
   const month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
@@ -300,7 +321,7 @@ function LearnProfile() {
                     </div >
                     <div>
                       {postComment.filter(itemP => itemP.profilePostId === item.id).map(itemP => (
-                        <>
+                        <div key={itemP.id} >
                           <div className="d-flex">
                             <img src={itemP.userAccount.profilePicture} style={{ width: '40px', height: '40px', borderRadius: '50%' }} alt="" />
                             <div className="d-flex flex-column align-items-end">
@@ -308,19 +329,35 @@ function LearnProfile() {
                                 <span className='fw-bold'>{itemP.userAccount.firstName} {itemP.userAccount.lastName}</span>
                                 <span className=''>{itemP.commentContent}</span>
                               </div>
-                              <span onClick={() => handleShowCommentReply(itemP.id)} style={{ fontSize: '14px' }} className='mb-2 mx-2'>Reply</span>
+                              {!IsShowCommentReply[itemP.id] && <span onClick={() => handleShowCommentReply(itemP.id)} style={{ fontSize: '14px' }} className='mb-2 mx-2 btn p-0'>Reply</span>}
                             </div>
                           </div>
-                          {IsShowCommentReply[itemP.id] &&
+                          {
+                            IsShowCommentReply[itemP.id] &&
+                            <>
+                              {postCommentReply.filter(itemR => itemR.postCommentId === itemP.id).map(itemR => (
+                                <div key={itemR.id} >
+                                  <div className="d-flex ms-5 mt-2"> {/*commentReply*/}
+                                    <img src={itemP.userAccount.profilePicture} style={{ width: '30px', height: '30px', borderRadius: '50%' }} alt="" />
+                                    <div className="d-flex flex-column align-items-end">
+                                      <div className='d-flex flex-column card p-2 mx-2'>
+                                        <span className='fw-bold'>{itemR.userAccount.firstName} {itemR.userAccount.lastName}</span>
+                                        <span className=''>{itemR.commentReplyContent}</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
 
 
-                            <div className='d-flex mb-3 ms-5'>
-                              <img style={{ width: '30px', height: '30px', borderRadius: '50%' }} src={user.profilePicture} alt="" />
-                              <input value={commentReply} onChange={e => setCommentReply(e.target.value)} className='ms-1 w-100 border-none' type="text" placeholder={`Write a comment...`} />
-                              <button onClick={() => handleComment(itemP.id)} className='buttonSendMessage'><i className="fa fa-paper-plane"></i></button>
-                            </div >
+                              <div className='d-flex mb-3 ms-5 mt-2'> {/*commentReply tool*/}
+                                <img style={{ width: '30px', height: '30px', borderRadius: '50%' }} src={user.profilePicture} alt="" />
+                                <input value={commentReply} onChange={e => setCommentReply(e.target.value)} className='ms-1 w-100 border-none' type="text" placeholder={`Write a comment...`} />
+                                <button onClick={() => handleCommentReply(itemP.id)} className='buttonSendMessage'><i className="fa fa-paper-plane"></i></button>
+                              </div >
+                            </>
                           }
-                        </>
+                        </div>
                       ))}
                     </div>
 
