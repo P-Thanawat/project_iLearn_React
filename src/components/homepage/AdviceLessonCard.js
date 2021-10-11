@@ -1,18 +1,30 @@
 import React from 'react'
 import { Link } from 'react-router-dom';
+// import '../../css/homepage.css'
 
 function Box(props) {
-  const { data: { teacherProfileId, img, lessonName, teacherName, reviewPoint } } = props;
+  const { lessons, reviews } = props;
+
+  const review = reviews.filter(item => item.lessonsId === lessons.id)
+  const reviewAvg = review.reduce((acc, item) => ((acc + +item.reviewPoint)), 0) / review.length;
   return (
-    <div className="box card">
-      <Link to={`/teacherProfile/${teacherProfileId}`}>
-        <img src={img} alt="" className="imgForBox" />
-        <h4>{lessonName}</h4>
-        <p>{teacherName}</p>
-        <h4>{reviewPoint}</h4>
-        <img src="" alt="" />
+    <div className="box">
+      <Link to={`/teacherProfile/${lessons?.teacherProfileId}`} style={{ textDecoration: 'none' }} >
+        <img src={lessons?.lessonPicutre} alt="" />
+        <p className='lessonName'>{lessons?.lessonName}</p>
+        <p className='lessonTeacherName'>{lessons?.teacherProfile.userAccount.firstName} {lessons?.teacherProfile.userAccount.lastName}</p>
+        <div className="d-flex justify-content-start align-items-start">
+          <p className='lessonReviewPoint'>{reviewAvg || ''}</p>
+          <div>
+            {reviewAvg >= 1 && <i className="fa fa-star starstarstar"></i>}
+            {reviewAvg >= 2 && <i className="fa fa-star starstarstar"></i>}
+            {reviewAvg >= 3 && <i className="fa fa-star starstarstar"></i>}
+            {reviewAvg >= 4 && <i className="fa fa-star starstarstar"></i>}
+            {reviewAvg >= 5 && <i className="fa fa-star starstarstar"></i>}
+          </div>
+        </div>
       </Link>
-    </div>
+    </div >
   )
 }
 

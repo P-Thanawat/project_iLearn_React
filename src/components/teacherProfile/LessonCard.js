@@ -39,9 +39,9 @@ function LessonCard({ lessonOption, setShowChoosing }) {
   return (
     <div>
       <div className="card text-black border-warning border-2 p-4 mb-4 ">
-        <h6>{lessonOption && lessonOption.data.data[0].lesson.lessonName}</h6>
+        <h6>{lessonOption?.data?.data[0]?.lesson?.lessonName}</h6>
         <div className="row">
-          <div className="col-8">{lessonOption && lessonOption.data.data[0].lesson.lessonDetail}</div>
+          <div className="col-8">{lessonOption?.data?.data[0]?.lesson?.lessonDetail}</div>
           <div className="col-4 d-flex justify-content-center align-items-center">
             <button className='btn btn-danger' onClick={handleShowBooking}>{lessonOption && 'USD ' + leastLessonPrice + '+'}</button>
           </div>

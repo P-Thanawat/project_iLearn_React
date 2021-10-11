@@ -10,6 +10,7 @@ import BookingLesson from '../components/teacherProfile/BookingLesson'
 import { SendDataFromTeacherContext } from '../contexts/SendDataFromTeacherContext'
 
 function TeacherProfile() {
+  window.scroll(0, 0)
   const [teacher, setTeacher] = useState({})
   const [userAccount, setUserAccount] = useState({})
   const [language, setLanguage] = useState([])

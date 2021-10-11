@@ -63,6 +63,16 @@ function LessonForm() {
 
     }
 
+    setLessonName('')
+    setLessonDetail('')
+    setLessonPicutre('')
+    setTypeTag([])
+    setLessonTime([])
+    setLessonPrice([])
+    setNumberOfLesson([])
+    setPromotionPrice([])
+    setIsShowPromotion([false, false, false])
+
 
   }
 
@@ -112,24 +122,24 @@ function LessonForm() {
             <div className="input-group mb-3">
               <label htmlFor="" className="input-group-text">Lesson Price 1</label>
               <input type="text" className='form-control' value={lessonPrice[0]} onChange={e => setLessonPrice(cur => [e.target.value, cur[1], cur[2]])} />
-              <span class="input-group-text">$</span>
+              <span className="input-group-text">$</span>
             </div>
             <div className="input-group mb-3">
               <label htmlFor="" className="input-group-text">Lesson Time 1</label>
               <input type="text" className='form-control' value={lessonTime[0]} onChange={e => setLessonTime(cur => [e.target.value, cur[1], cur[2]])} />
-              <span class="input-group-text">Minutes</span>
+              <span className="input-group-text">Minutes</span>
               {(lessonTime[0] && lessonPrice[0]) && <button class="btn btn-success" type="button" hidden={isShowPromotion[0]} onClick={() => setIsShowPromotion(cur => [!cur[0], cur[1], cur[2]])}>ADD PROMOTION</button>}
             </div>
             {isShowPromotion[0] && <>
               <div className="input-group mb-3">
                 <label htmlFor="" className="input-group-text">Number fo Lesson 1</label>
                 <input type="text" className='form-control' value={numberOfLesson[0]} onChange={e => setNumberOfLesson(cur => [e.target.value, cur[1], cur[2]])} />
-                <span class="input-group-text">lessons</span>
+                <span className="input-group-text">lessons</span>
               </div>
               <div className="input-group mb-3">
                 <label htmlFor="" className="input-group-text">Promotion Price 1</label>
                 <input type="text" className='form-control' value={promotionPrice[0]} onChange={e => setPromotionPrice(cur => [e.target.value, cur[1], cur[2]])} />
-                <span class="input-group-text">$</span>
+                <span className="input-group-text">$</span>
               </div>
             </>}
 
@@ -137,23 +147,23 @@ function LessonForm() {
               <div className="input-group mb-3">
                 <label htmlFor="" className="input-group-text">Lesson Price 2</label>
                 <input type="text" className='form-control' value={lessonPrice[1]} onChange={e => setLessonPrice(cur => [cur[0], e.target.value, cur[2]])} />
-                <span class="input-group-text">$</span>
+                <span className="input-group-text">$</span>
               </div><div className="input-group mb-3">
                 <label htmlFor="" className="input-group-text">Lesson Time 2</label>
                 <input type="text" className='form-control' value={lessonTime[1]} onChange={e => setLessonTime(cur => [cur[0], e.target.value, cur[2]])} />
-                <span class="input-group-text">Minutes</span>
+                <span className="input-group-text">Minutes</span>
                 {(lessonTime[1] && lessonPrice[1]) && <button class="btn btn-success" type="button" hidden={isShowPromotion[1]} onClick={() => setIsShowPromotion(cur => [cur[0], !cur[1], cur[2]])}>ADD PROMOTION</button>}
               </div>
               {isShowPromotion[1] && <>
                 <div className="input-group mb-3">
                   <label htmlFor="" className="input-group-text">Number fo Lesson 2</label>
                   <input type="text" className='form-control' value={numberOfLesson[1]} onChange={e => setNumberOfLesson(cur => [cur[0], e.target.value, cur[2]])} />
-                  <span class="input-group-text">lessons</span>
+                  <span className="input-group-text">lessons</span>
                 </div>
                 <div className="input-group mb-3">
                   <label htmlFor="" className="input-group-text">Promotion Price 2</label>
                   <input type="text" className='form-control' value={promotionPrice[1]} onChange={e => setPromotionPrice(cur => [cur[0], e.target.value, cur[2]])} />
-                  <span class="input-group-text">$</span>
+                  <span className="input-group-text">$</span>
                 </div>
               </>}
             </>
@@ -162,24 +172,24 @@ function LessonForm() {
               <div className="input-group mb-3">
                 <label htmlFor="" className="input-group-text">Lesson Price 3</label>
                 <input type="text" className='form-control' value={lessonPrice[2]} onChange={e => setLessonPrice(cur => [cur[0], cur[1], e.target.value])} />
-                <span class="input-group-text">$</span>
+                <span className="input-group-text">$</span>
               </div>
               <div className="input-group mb-3">
                 <label htmlFor="" className="input-group-text">Lesson Time 3</label>
                 <input type="text" className='form-control' value={lessonTime[2]} onChange={e => setLessonTime(cur => [cur[0], cur[1], e.target.value])} />
-                <span class="input-group-text">Minutes</span>
+                <span className="input-group-text">Minutes</span>
                 {(lessonTime[2] && lessonPrice[2]) && <button class="btn btn-success" type="button" hidden={isShowPromotion[2]} onClick={() => setIsShowPromotion(cur => [cur[0], cur[1], !cur[2]])}>ADD PROMOTION</button>}
               </div>
               {isShowPromotion[2] && <>
                 <div className="input-group mb-3">
                   <label htmlFor="" className="input-group-text">Number fo Lesson 3</label>
                   <input type="text" className='form-control' value={numberOfLesson[2]} onChange={e => setNumberOfLesson(cur => [cur[0], cur[1], e.target.value])} />
-                  <span class="input-group-text">lessons</span>
+                  <span className="input-group-text">lessons</span>
                 </div>
                 <div className="input-group mb-3">
                   <label htmlFor="" className="input-group-text">Promotion Price 3</label>
                   <input type="text" className='form-control' value={promotionPrice[2]} onChange={e => setPromotionPrice(cur => [cur[0], cur[1], e.target.value])} />
-                  <span class="input-group-text">$</span>
+                  <span className="input-group-text">$</span>
                 </div>
               </>}
 
@@ -187,7 +197,7 @@ function LessonForm() {
             }
             <div className="input-group mb-3">
               <label htmlFor="" className="input-group-text">Choose available lesson time</label>
-              <button class="btn btn-success" type="button" onClick={handleChooseAvailable}>Choose</button>
+              <button className="btn btn-success" type="button" onClick={handleChooseAvailable}>Choose</button>
             </div>
             <div className="input-group mb-3 d-flex justify-content-end">
               <Button variant="primary" type="submit" data-bs-dismiss="modal">Save</Button>

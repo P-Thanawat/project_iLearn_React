@@ -14,10 +14,18 @@ function Header({ page }) {
     <div className={page === 'home' ? 'indexHeaderHome' : 'indexHeaderOther'}>
 
       <div className="left">
-        <div className="hamburger" data-bs-toggle="modal" data-bs-target="#hamburger">
-          <div className="rectangle"></div>
-          <div className="rectangle"></div>
-          <div className="rectangle"></div>
+
+        <div className="dropdown">
+          <div className="hamburger" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown">
+            <div className="rectangle" ></div>
+            <div className="rectangle" ></div>
+            <div className="rectangle" ></div>
+          </div>
+          <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li><a className="dropdown-item" href="#">Find Lesson</a></li>
+            <li><a className="dropdown-item" href="#">Exchange Group</a></li>
+            <li><a className="dropdown-item" href="#">Interesting Board</a></li>
+          </ul>
         </div>
         <div className="logo">
           <Link to='/'><h1 className='btn text-warning fs-2'>i<ins>Learn</ins></h1></Link>
@@ -28,7 +36,7 @@ function Header({ page }) {
           <Link to='/'><p className='btn text-light m-0'>Home</p></Link>
         </div>
         <div className="fTeacher">
-          <Link to='/findTeacher'><p className='btn text-light m-0'>Find Teacher</p></Link>
+          <Link to='/findTeacher'><p className='btn text-light m-0'>Find Lesson</p></Link>
         </div>
         <div className="exGroup">
           <Link to='/exchangeGroup'><p className='btn text-light m-0'>Exchange Group</p></Link>

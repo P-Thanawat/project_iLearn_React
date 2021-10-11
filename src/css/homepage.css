@@ -43,6 +43,9 @@ body {
   border-radius: 50%;
   display: inline-block;
 }
+.dotdotdot {
+  background-color: burlywood;
+}
 
 .rectangle {
   height: 4px;
@@ -57,6 +60,8 @@ body {
   flex-direction: column;
   justify-content: center;
   padding: 0px 10px;
+  padding-bottom: 10px;
+  margin-top: 25px;
 }
 
 .logo {
@@ -258,25 +263,33 @@ body {
 
 .flex {
   display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
 .content {
-  margin: 60px 10vw;
+  margin: 30px 10vw;
 }
 
 .box {
-  /* margin-left:12vw; */
-  /* background-color: #4baaac;
-  border-top: 5vw solid #eeeeee;
-  width: 18vw;
-  height: 13vw;
+  /* margin-left: 12vw; */
+  background-color: #4baaac;
   border-radius: 2rem;
-  margin: 0px 5px; */
-  /* border:10px solid white; */
-  width: 300px;
-  height: 350px;
+  margin: 20px 5px;
+  width: 18vw;
+  height: 18vw;
+}
+
+.box a {
+  text-decoration: none;
+  color: white; /* blue colors for links too */
+  text-decoration: inherit; /* no underline */
+}
+
+.box img {
+  border-top-right-radius: 2rem;
+  border-top-left-radius: 2rem;
+  margin: 0px 0px;
+  width: 100%;
+  height: 12vw;
 }
 
 .content > i {
@@ -284,6 +297,25 @@ body {
   margin: 0px 10px;
 }
 
-.imgForBox {
-  height: 200px;
+.box .lessonName {
+  font-family: lily script One;
+  margin: 2px 10px;
+}
+
+.box .lessonTeacherName {
+  margin: 2px 10px;
+  font-size: 12px;
+}
+
+.box .lessonReviewPoint {
+  font-size: 16px;
+  color: #fdea2c;
+  font-weight: bold;
+  text-align: center;
+  margin: 2px 10px;
+  margin-bottom: 6px;
+}
+
+.fa-star {
+  color: #fdea2c;
 }
