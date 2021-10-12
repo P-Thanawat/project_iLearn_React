@@ -12,7 +12,7 @@ import FindTeacher from './pages/FindTeacher';
 import Home from './pages/HomePage';
 import LearnProfile from './pages/LearnProfile';
 import Messenger from './pages/Messager';
-import Payment from './pages/Payment';
+import PaymentLesson from './components/teacherProfile/PaymentLesson';
 import TeacherProfile from './pages/TeacherProfile';
 import UserDropDown from './components/allpages/UserDropDown';
 import RegisterForm from './components/allpages/RegisterForm';
@@ -32,6 +32,9 @@ import BookingLesson from './components/teacherProfile/BookingLesson';
 import AvailableCalendar from './components/allpages/AvailableCalendar';
 import ReviewForm from './components/allpages/ReviewForm';
 import { ModalContext } from './contexts/ModalContext';
+import Payment from './pages/Payment';
+import TopupCredit from './components/allpages/TopupCredit';
+import AddCreditCard from './components/allpages/AddCreditCard';
 
 
 function App() {
@@ -112,6 +115,9 @@ function App() {
       <BookingLesson /> {/* modal */}
       <AvailableCalendar teacherProfile={teacherProfile} /> {/* modal */}
       <ReviewForm lessonsRecord={lessonsRecord} /> {/* modal */}
+      <PaymentLesson /> {/* modal */}
+      <TopupCredit /> {/* modal */}
+      <AddCreditCard /> {/* modal */}
 
       <Switch>
         <Route path='/findTeacher' component={FindTeacher} />

@@ -5,14 +5,22 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { AlertMessageContext } from "../../contexts/AlertMessageContext";
 import { AuthContext } from "../../contexts/AuthContext";
 import axios from '../../config/axios'
+import { set } from "date-fns";
+import { ModalContext } from "../../contexts/ModalContext";
+import PaymentLesson from "./PaymentLesson";
 
 
 const localizer = momentLocalizer(moment);
 
-function BookingCalendar({ lesson, handleClose }) {
+function BookingCalendar({ lesson, handleClose, lessonOption }) {
   const { showAlertMessage, setShowAlertMessage, messageText, setMessageText } = useContext(AlertMessageContext)
   const [events, setEvents] = useState([])
   const { user } = useContext(AuthContext)
+  const [lessonTime, setLessonTime] = useState(0)
+  const [lessonPrice, setLessonPrice] = useState(0)
+  const [selectedTime, setSelectedTime] = useState(0)
+  const [showButton, setShowButton] = useState([])
+  const { setShowPayment, setPaymentData } = useContext(ModalContext)
 
   console.log(`lesson`, lesson)
   useEffect(() => {
@@ -26,6 +34,7 @@ function BookingCalendar({ lesson, handleClose }) {
       //* availableData - lessonsRecordData
       lessonsRecordData.forEach(itemL => {
         availableData.forEach(itemA => {
+          //*between between
           if ((moment(itemL.startLearnTime).isBetween(itemA.startAvailableTime, itemA.endAvailableTime)) && (moment(itemL.endLearnTime).isBetween(itemA.startAvailableTime, itemA.endAvailableTime))) {
             availableData.push({
               startAvailableTime: new Date(itemA.startAvailableTime).toISOString(),
@@ -40,51 +49,100 @@ function BookingCalendar({ lesson, handleClose }) {
             const idx = availableData.findIndex(item => item.id === itemA.id);
             availableData.splice(idx, 1)
           }
+          //*same same
+          if ((moment(itemL.startLearnTime).isSame(itemA.startAvailableTime)) && (moment(itemL.endLearnTime).isSame(itemA.endAvailableTime))) {
+            const idx = availableData.findIndex(item => item.id === itemA.id);
+            availableData.splice(idx, 1)
+          }
+
+          //*same and between
+          if ((moment(itemL.startLearnTime).isSame(itemA.startAvailableTime)) && (moment(itemL.endLearnTime).isBetween(itemA.startAvailableTime, itemA.endAvailableTime))) {
+            availableData.push({
+              startAvailableTime: new Date(itemL.endLearnTime).toISOString(),
+              endAvailableTime: new Date(itemA.endAvailableTime).toISOString(),
+              id: Date.now(),
+            })
+            const idx = availableData.findIndex(item => item.id === itemA.id);
+            availableData.splice(idx, 1)
+          }
+
+          //*between same
+          if ((moment(itemL.startLearnTime).isBetween(itemA.startAvailableTime, itemA.endAvailableTime)) && (moment(itemL.endLearnTime).isSame(itemA.endAvailableTime))) {
+            availableData.push({
+              startAvailableTime: new Date(itemA.startAvailableTime).toISOString(),
+              endAvailableTime: new Date(itemL.startLearnTime).toISOString(),
+              id: Date.now(),
+            })
+            const idx = availableData.findIndex(item => item.id === itemA.id);
+            availableData.splice(idx, 1)
+          }
         })
-      })
 
-      // //* to subtract available in the past
-      // availableData.forEach(itemA => {
-      //   if (itemA.endAvailableTime < (new Date().toISOString())) {
+        // //* to subtract available in the past
+        // availableData.forEach(itemA => {
+        //   if (itemA.endAvailableTime < (new Date().toISOString())) {
 
-      //     const idx = availableData.findIndex(item => item.id === itemA.id);
-      //     availableData.splice(idx, 1)
-      //   }
-      // })
+        //     const idx = availableData.findIndex(item => item.id === itemA.id);
+        //     availableData.splice(idx, 1)
+        //   }
+        // })
 
-      const initialEvent = [];
-      availableData.forEach(item => {
-        initialEvent.push({
-          start: moment(new Date(item?.startAvailableTime)).toDate(),
-          end: moment(new Date(item?.endAvailableTime)).toDate(),
-          title: 'available',
-          id: item?.id,
+        const initialEvent = [];
+        availableData.forEach(item => {
+          initialEvent.push({
+            start: moment(new Date(item?.startAvailableTime)).toDate(),
+            end: moment(new Date(item?.endAvailableTime)).toDate(),
+            title: 'available',
+            id: item?.id,
+          })
         })
-      })
-      console.log(`initialEvent`, initialEvent)
-      setEvents(initialEvent)
+        console.log(`initialEvent`, initialEvent)
+        setEvents(initialEvent)
 
+      })
     }
     run()
   }, [])
 
   const handleBook = async () => {
-    handleClose();
-    const learnData = events.filter(item => item.title === 'learn')
-    for (let i = 0; i <= learnData.length - 1; i++) {
-      await axios.post('/lessonsRecord', { startLearnTime: learnData?.[i]?.start, endLearnTime: learnData?.[i]?.end, completed: false, userAccountId: user?.id, lessonsId: lesson?.[0]?.id })
+    if (selectedTime !== lessonTime) {
+      setMessageText('You chose lesson time less')
+      setShowAlertMessage(true)
+      setTimeout(() => {
+        setShowAlertMessage(false)
+      }, 3000);
+    }
+    if (selectedTime === lessonTime) {
+      handleClose();
+      const learnData = events.filter(item => item.title === 'learn')
+      // for (let i = 0; i <= learnData.length - 1; i++) {
+      //   await axios.post('/lessonsRecord', { startLearnTime: learnData?.[i]?.start, endLearnTime: learnData?.[i]?.end, completed: false, userAccountId: user?.id, lessonsId: lesson?.[0]?.id })
+      // }
+      setPaymentData(cur => ({ ...cur, lesson, user, learnData, lessonPrice, }))
+      setShowPayment(true)
+
+
+
+      // setMessageText('You have just sent booking request to teacher')
+      // setShowAlertMessage(true)
+      // setTimeout(() => {
+      //   setShowAlertMessage(false)
+      // }, 3000);
     }
 
-    setMessageText('You have just sent booking request to teacher')
-    setShowAlertMessage(true)
-    setTimeout(() => {
-      setShowAlertMessage(false)
-    }, 3000);
   }
 
 
 
   const handleSelect = async ({ start, end }) => {
+    const selectedTimeNow = selectedTime + (((new Date(end)).getTime() - (new Date(start)).getTime()) / 1000 / 60)
+
+    let IsOverTime = false;
+    if (selectedTimeNow > lessonTime) {
+      IsOverTime = true;
+    }
+    console.log(`IsOverTime`, IsOverTime)
+
     // const title = window.prompt('New Event name')
     // console.log(`start`, start)
     // console.log(`end`, end)
@@ -129,7 +187,8 @@ function BookingCalendar({ lesson, handleClose }) {
 
     })
 
-    if (!IsRepeat && start > moment().add(1, "days").toDate() && IsAvailable) { //past case
+    if (!IsRepeat && start > moment().add(1, "days").toDate() && IsAvailable && !IsOverTime) { //past case
+      setSelectedTime(selectedTimeNow);
       setEvents(cur => ([
         {
           start,
@@ -167,22 +226,34 @@ function BookingCalendar({ lesson, handleClose }) {
         setShowAlertMessage(false)
       }, 3000);
     }
+    else if (IsOverTime) {
+
+      selectedTime === 0 ?
+        setMessageText('Please choose lesson option') :
+        setMessageText('You chose lesson time over')
+      setShowAlertMessage(true)
+      setTimeout(() => {
+        setShowAlertMessage(false)
+      }, 3000);
+    }
 
   }
 
   const handleEvent = (event) => {
     console.log(event)
+    setSelectedTime(cur => cur - (((event.end).getTime() - (event.start).getTime()) / 1000 / 60))
     setEvents(cur => cur.filter(item => item.id !== event.id || item.title === 'available'))
+
   }
   console.log(`events`, events)
 
   const eventStyleGetter = (event, start, end, isSelected) => {
-    var backgroundColor = event.title === 'learn' ? 'lightBlue' : 'green';
+    const backgroundColor = event.title === 'learn' ? 'lightBlue' : 'green';
     // console.log(`event`, event)
     // console.log(`start`, start)
     // console.log(`end`, end)
     // console.log(`isSelected`, isSelected)
-    var style = {
+    const style = {
       backgroundColor: backgroundColor,
       borderRadius: '0px',
       opacity: 0.8,
@@ -197,9 +268,37 @@ function BookingCalendar({ lesson, handleClose }) {
     })
   }
 
+  const handleSelectOption = (lessonOptionId, IsOption) => {
+    const lesson = lessonOption.find(item => item.id === lessonOptionId)
+    if (IsOption) {
+      setLessonTime(lesson.lessonTime * lesson.numberOfLesson)
+      setLessonPrice(+lesson.promotionPrice)
+    }
+    else {
+      setLessonTime(+lesson.lessonTime)
+      setLessonPrice(+lesson.lessonPrice)
+    }
+    setShowButton([lesson.id, IsOption])
+
+    setEvents(cur => cur.filter(item => item.title !== 'learn'))
+
+  }
+
 
   return (
     <div>
+
+      <div className="d-flex justify-content-start">
+        {lessonOption.map(item => (
+          <div key={item.id}>
+            <div className="d-flex flex-column align-items-center me-2 mb-4">
+              <p className='fw-bold'>{item.lessonTime} Minutes</p>
+              <button onClick={() => handleSelectOption(item.id, false)} className={`btn ${showButton[0] === item.id && !showButton[1] ? 'btn-success' : ''} border`}>1Lesson $ {item.lessonPrice}</button>
+              {item.numberOfLesson && <button onClick={() => handleSelectOption(item.id, true)} className={`btn border mt-2 ${showButton[0] === item.id && showButton[1] ? 'btn-success' : ''}`}>{item.numberOfLesson}Lesson $ {item.promotionPrice}</button>}
+            </div>
+          </div>
+        ))}
+      </div>
       <Calendar
         localizer={localizer}
         defaultDate={new Date()}
