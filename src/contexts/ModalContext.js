@@ -16,6 +16,10 @@ function ModalProvider({ children }) {
   const [paymentData, setPaymentData] = useState({})
   const [showTopup, setShowTopup] = useState(false)
   const [showAddCreditCard, setShowAddCreditCard] = useState(false)
+  const [showAlertConfirm, setShowAlertConfirm] = useState(false)
+  const [answer, setAnswer] = useState(false)
+  const [lessonData, setLessonData] = useState({})
+  const [IsEditLesson, setIsEditLesson] = useState(false)
 
   return <ModalContext.Provider value={{
     showLogin, setShowLogin,
@@ -30,7 +34,11 @@ function ModalProvider({ children }) {
     showPayment, setShowPayment,
     paymentData, setPaymentData,
     showTopup, setShowTopup,
-    showAddCreditCard, setShowAddCreditCard
+    showAddCreditCard, setShowAddCreditCard,
+    showAlertConfirm, setShowAlertConfirm,
+    answer, setAnswer,
+    lessonData, setLessonData,
+    IsEditLesson, setIsEditLesson
   }}>{children}</ModalContext.Provider>
 }
 

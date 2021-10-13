@@ -7,6 +7,7 @@ import Header from '../components/allpages/Header'
 import { AuthContext } from '../contexts/AuthContext'
 import '../css/learnerProfile.css'
 import { ModalContext } from '../contexts/ModalContext'
+import { Button, Modal } from 'react-bootstrap';
 
 function LearnProfile() {
   const userId = window.location.href.split('/')[window.location.href.split('/').length - 1]
@@ -32,8 +33,17 @@ function LearnProfile() {
   const [commentReply, setCommentReply] = useState('')
   const [refreshComment, setRefreshComment] = useState(false)
   const [postCommentReply, setPostCommentReply] = useState([])
+  const [showAlertConfirm, setShowAlertConfirm] = useState(false)
+  const [deleteProfilePostId, setDeleteProfilePostId] = useState('')
+  const [IsEdit, setIsEdit] = useState(false)
+  const [editPostId, setEditPostId] = useState('')
+  const [editCommentId, setEditCommentId] = useState('')
+  const [IsEditComment, setIsEditComment] = useState(false)
+  const [IsEditCommentReply, setIsEditCommentReply] = useState(false)
+  const [editCommentReplyId, setEditCommentReplyId] = useState('')
 
-
+  const handleClose = () => setShowAlertConfirm(false);
+  const handleShow = () => setShowAlertConfirm(true);
 
   useEffect(() => {
     const run = async () => {
@@ -63,15 +73,15 @@ function LearnProfile() {
 
 
       console.log(`learnUser`, learnUser)
-      console.log(`learnProfile`, learnProfile)
-      console.log(`profilePost`, profilePost)
-      console.log(`following`, following)
-      console.log(`follower`, follower)
-      console.log(`learnSkill`, learnSkill)
-      console.log(`lessonsRecord`, lessonsRecord)
-      console.log(`finishedLessonRecord`, finishedLessonRecord)
-      console.log(`IsShowComment`, IsShowComment)
-      console.log(`IsShowCommentReply`, IsShowCommentReply)
+      // console.log(`learnProfile`, learnProfile)
+      // console.log(`profilePost`, profilePost)
+      // console.log(`following`, following)
+      // console.log(`follower`, follower)
+      // console.log(`learnSkill`, learnSkill)
+      // console.log(`lessonsRecord`, lessonsRecord)
+      // console.log(`finishedLessonRecord`, finishedLessonRecord)
+      // console.log(`IsShowComment`, IsShowComment)
+      // console.log(`IsShowCommentReply`, IsShowCommentReply)
 
 
       setLearnUser(learnUser)
@@ -180,6 +190,7 @@ function LearnProfile() {
 
   const handleComment = async (postId) => {
     await axios.post('/postComment', { commentContent: comment, profilePostId: postId })
+    setComment('')
     setRefreshComment(cur => !cur)
 
   }
@@ -200,21 +211,109 @@ function LearnProfile() {
 
   const month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sept', 'Oct', 'Nov', 'Dec'];
 
+  const handleDeletePost = async profilePostId => {
+    setShowAlertConfirm(true)
+    setDeleteProfilePostId(profilePostId)
+  }
+
+  const confirmDelete = async () => {
+    const profilePostId = deleteProfilePostId;
+
+    await axios.delete(`/profilePost/${profilePostId}`)
+    window.location.reload()
+  }
+
+  const handleEdit = async (postId, postContent) => {
+    setIsEdit(true)
+    setContentText(postContent)
+    setEditPostId(postId)
+
+  }
+
+  const handleEditPost = async () => {
+    const formData = new FormData();
+    formData.append('postContent', contentText)
+    formData.append('postPicture', contentPicture ?? null)
+    formData.append('learnerProfileId', learnProfile.id)
+    formData.append('userAccountId', user.id)
+    console.log(`formData`, formData)
+    await axios.put('/profilePost', formData)
+    window.location.reload()
+  }
+
+  const handleDeleteComment = async commentId => {
+    await axios.delete(`postComment/${commentId}`)
+    setRefreshComment(cur => !cur)
+  }
+
+  const handleEditComment = async (commentId, comment) => {
+    setIsEditComment(true)
+    setEditCommentId(commentId)
+    setComment(comment)
+
+  }
+
+  const handleEditCommentPost = async () => {
+    const commentId = editCommentId;
+    setComment('')
+    setIsEditComment(false)
+    await axios.put(`postComment/${commentId}`, { commentContent: comment })
+    setRefreshComment(cur => !cur)
+  }
+
+  const handleDeleteCommentReply = async commentReplyId => {
+    await axios.delete(`commentReply/${commentReplyId}`)
+    setRefreshComment(cur => !cur)
+  }
+
+  const handleEditCommentReply = async (commentReplyId, commentReply) => {
+    setIsEditCommentReply(true)
+    setEditCommentReplyId(commentReplyId)
+    setCommentReply(commentReply)
+  }
+
+  const handleEditCommentReplyPost = async () => {
+    const commentReplyId = editCommentReplyId;
+    setCommentReply('')
+    setIsEditCommentReply(false)
+    await axios.put(`commentReply/${commentReplyId}`, { commentReplyContent: commentReply })
+    setRefreshComment(cur => !cur)
+  }
+
   return (
     <div className='learnProfilePage'>
+      <Modal show={showAlertConfirm} onHide={handleClose}>
+        <Modal.Header closeButton>
+          <Modal.Title>Are you sure!</Modal.Title>
+        </Modal.Header>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button onClick={() => confirmDelete()} variant="danger">
+            Confirm
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <Header />
       <div className="row">
         <div className="col-6">
           <div className="card p-4 "> {/*AboutMe*/}
             <div className="mb-4 d-flex">
               <div className="">
-                <img className='learnerProfilePicture' src={learnUser.profilePicture} alt="" />
-                {user?.id === learnUser?.id &&
-                  <label className="btn btn-info opacity-50 text-light rounded-circle editPicture">
-                    <input onChange={handleChangeProfilePicture} className='inputChangeProfilePicture' type="file" />
-                    +
-                  </label>
-                }
+                <div className=''>
+                  <div className='float-end'>
+                    {user?.id === learnUser?.id &&
+                      <label className="btn btn-info opacity-50 text-light rounded-circle editPicture">
+                        <input onChange={handleChangeProfilePicture} className='inputChangeProfilePicture' type="file" />
+                        +
+                      </label>
+                    }
+                  </div>
+                  <img className='border learnerProfilePicture' src={learnUser.profilePicture} alt="" />
+                </div>
+
               </div>
               <div className="">
                 <h2>{learnUser.firstName} {learnUser.lastName}</h2>
@@ -281,19 +380,26 @@ function LearnProfile() {
                     <input onChange={handleFile} className='inputFileCustom' type="file" />
                     PHOTO
                   </label>
-                  <button onClick={handlePost} className='btn btn-primary w-100 my-2 rounded-pill'>POST</button>
+                  {IsEdit && <button onClick={() => { setIsEdit(false); setContentText(''); }} className='btn btn-danger w-100 mt-2 rounded-pill'>Cancel</button>}
+                  <button onClick={IsEdit ? handleEditPost : handlePost} className='btn btn-primary w-100 my-2 rounded-pill'>{IsEdit ? 'UPDATE' : 'POST'}</button>
                 </div>
               </div>
             </div>
           </div>}
           {profilePost.map(item => (
-            <div className="card p-4" key={item.id}> {/*post*/}
+            <div className="card p-4" key={item?.id}> {/*post*/}
               <div className=""> {/*user post*/}
-                <div className="d-flex justify-content-start align-items-center">
-                  <img className='postUserProfilePicture' src={item.postUser.profilePicture} alt="" />
-                  <div className='d-flex flex-column'>
-                    <span className='mx-2 fw-bold'>{item.postUser.firstName} {item.postUser.lastName}</span>
-                    <span className='mx-2'>{new Date(item.updatedAt).toUTCString().slice(0, 22)}</span>
+                <div className="d-flex justify-content-between align-items-center">
+                  <div className="d-flex justify-content-start align-items-center">
+                    <img className='postUserProfilePicture' src={item.postUser.profilePicture} alt="" />
+                    <div className='d-flex flex-column'>
+                      <span className='mx-2 fw-bold'>{item.postUser.firstName} {item.postUser.lastName}</span>
+                      <span className='mx-2'>{new Date(item.updatedAt).toUTCString().slice(0, 22)}</span>
+                    </div>
+                  </div>
+                  <div>
+                    {user?.id === learnUser?.id && <button onClick={() => handleEdit(item.id, item.postContent, item.postPicture)} className='btn btn-primary'>EDIT</button>}
+                    {user?.id === learnUser?.id && <button onClick={() => handleDeletePost(item?.id)} className='btn btn-danger'>X</button>}
                   </div>
                 </div>
               </div>
@@ -317,7 +423,7 @@ function LearnProfile() {
                     <div className='d-flex mb-3'>
                       <img style={{ width: '40px', height: '40px', borderRadius: '50%' }} src={user.profilePicture} alt="" />
                       <input value={comment} onChange={e => setComment(e.target.value)} className='ms-1 w-100 border-none' type="text" placeholder={`Write a comment...`} />
-                      <button onClick={() => handleComment(item.id)} className='buttonSendMessage'><i className="fa fa-paper-plane"></i></button>
+                      <button onClick={() => IsEditComment ? handleEditCommentPost() : handleComment(item.id)} className='buttonSendMessage'><i className="fa fa-paper-plane"></i></button>
                     </div >
                     <div>
                       {postComment.filter(itemP => itemP.profilePostId === item.id).map(itemP => (
@@ -329,7 +435,11 @@ function LearnProfile() {
                                 <span className='fw-bold'>{itemP.userAccount.firstName} {itemP.userAccount.lastName}</span>
                                 <span className=''>{itemP.commentContent}</span>
                               </div>
-                              {!IsShowCommentReply[itemP.id] && <span onClick={() => handleShowCommentReply(itemP.id)} style={{ fontSize: '14px' }} className='mb-2 mx-2 btn p-0'>Reply</span>}
+                              <div className='d-flex'>
+                                {user?.id === itemP.userAccount.id && !IsShowCommentReply[itemP.id] && <span onClick={() => handleEditComment(itemP.id, itemP.commentContent)} style={{ fontSize: '14px' }} className='mb-2 mx-2 btn p-0'>Edit</span>}
+                                {user?.id === itemP.userAccount.id && !IsShowCommentReply[itemP.id] && <span onClick={() => handleDeleteComment(itemP.id)} style={{ fontSize: '14px' }} className='mb-2 mx-2 btn p-0'>Delete</span>}
+                                {!IsShowCommentReply[itemP.id] && <span onClick={() => handleShowCommentReply(itemP.id)} style={{ fontSize: '14px' }} className='mb-2 mx-2 btn p-0'>Reply</span>}
+                              </div>
                             </div>
                           </div>
                           {
@@ -338,12 +448,18 @@ function LearnProfile() {
                               {postCommentReply.filter(itemR => itemR.postCommentId === itemP.id).map(itemR => (
                                 <div key={itemR.id} >
                                   <div className="d-flex ms-5 mt-2"> {/*commentReply*/}
-                                    <img src={itemP.userAccount.profilePicture} style={{ width: '30px', height: '30px', borderRadius: '50%' }} alt="" />
+                                    <img src={itemR.userAccount.profilePicture} style={{ width: '30px', height: '30px', borderRadius: '50%' }} alt="" />
                                     <div className="d-flex flex-column align-items-end">
                                       <div className='d-flex flex-column card p-2 mx-2'>
                                         <span className='fw-bold'>{itemR.userAccount.firstName} {itemR.userAccount.lastName}</span>
                                         <span className=''>{itemR.commentReplyContent}</span>
                                       </div>
+                                      {user?.id === itemR.userAccount.id &&
+                                        <div div className='d-flex'>
+                                          <span onClick={() => handleEditCommentReply(itemR.id, itemR.commentReplyContent)} style={{ fontSize: '14px' }} className='mb-2 mx-2 btn p-0'>Edit</span>
+                                          <span onClick={() => handleDeleteCommentReply(itemR.id)} style={{ fontSize: '14px' }} className='mb-2 mx-2 btn p-0'>Delete</span>
+                                        </div>
+                                      }
                                     </div>
                                   </div>
                                 </div>
@@ -353,7 +469,7 @@ function LearnProfile() {
                               <div className='d-flex mb-3 ms-5 mt-2'> {/*commentReply tool*/}
                                 <img style={{ width: '30px', height: '30px', borderRadius: '50%' }} src={user.profilePicture} alt="" />
                                 <input value={commentReply} onChange={e => setCommentReply(e.target.value)} className='ms-1 w-100 border-none' type="text" placeholder={`Write a comment...`} />
-                                <button onClick={() => handleCommentReply(itemP.id)} className='buttonSendMessage'><i className="fa fa-paper-plane"></i></button>
+                                <button onClick={() => IsEditCommentReply ? handleEditCommentReplyPost() : handleCommentReply(itemP.id)} className='buttonSendMessage'><i className="fa fa-paper-plane"></i></button>
                               </div >
                             </>
                           }

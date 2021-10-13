@@ -6,6 +6,7 @@
   height: 200px;
   width: 200px;
   border-radius: 50%;
+  margin-top: 0px;
 }
 .completedLessonLearnerProfilePicture {
   height: 80px;
@@ -45,9 +46,11 @@
 }
 
 .editPicture {
-  position: absolute;
+  /* position: absolute; */
   top: 30px;
-  right: 240px;
+  right: 250px;
+  margin-left: -50px;
+  margin-bottom: -30px;
 }
 
 .inputChangeProfilePicture {

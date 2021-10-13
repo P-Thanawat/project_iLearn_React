@@ -18,6 +18,7 @@ function BookingCalendar({ lesson, handleClose, lessonOption }) {
   const { user } = useContext(AuthContext)
   const [lessonTime, setLessonTime] = useState(0)
   const [lessonPrice, setLessonPrice] = useState(0)
+
   const [selectedTime, setSelectedTime] = useState(0)
   const [showButton, setShowButton] = useState([])
   const { setShowPayment, setPaymentData } = useContext(ModalContext)
@@ -30,6 +31,7 @@ function BookingCalendar({ lesson, handleClose, lessonOption }) {
 
       console.log(`availableData`, availableData)
       console.log(`lessonsRecordData`, lessonsRecordData)
+
 
       //* availableData - lessonsRecordData
       lessonsRecordData.forEach(itemL => {
@@ -77,29 +79,33 @@ function BookingCalendar({ lesson, handleClose, lessonOption }) {
             availableData.splice(idx, 1)
           }
         })
+      })
 
-        // //* to subtract available in the past
-        // availableData.forEach(itemA => {
-        //   if (itemA.endAvailableTime < (new Date().toISOString())) {
 
-        //     const idx = availableData.findIndex(item => item.id === itemA.id);
-        //     availableData.splice(idx, 1)
-        //   }
-        // })
 
-        const initialEvent = [];
-        availableData.forEach(item => {
-          initialEvent.push({
-            start: moment(new Date(item?.startAvailableTime)).toDate(),
-            end: moment(new Date(item?.endAvailableTime)).toDate(),
-            title: 'available',
-            id: item?.id,
-          })
+      // //* to subtract available in the past
+      // availableData.forEach(itemA => {
+      //   if (itemA.endAvailableTime < (new Date().toISOString())) {
+
+      //     const idx = availableData.findIndex(item => item.id === itemA.id);
+      //     availableData.splice(idx, 1)
+      //   }
+      // })
+
+      const initialEvent = [];
+      availableData.forEach(item => {
+        initialEvent.push({
+          start: moment(new Date(item?.startAvailableTime)).toDate(),
+          end: moment(new Date(item?.endAvailableTime)).toDate(),
+          title: 'available',
+          id: item?.id,
         })
-        console.log(`initialEvent`, initialEvent)
-        setEvents(initialEvent)
+
+
 
       })
+      console.log(`initialEvent`, initialEvent)
+      setEvents(initialEvent)
     }
     run()
   }, [])
@@ -288,13 +294,13 @@ function BookingCalendar({ lesson, handleClose, lessonOption }) {
   return (
     <div>
 
-      <div className="d-flex justify-content-start">
+      <div className="d-flex justify-content-start my-2 p-2" > {/*Choose Option*/}
         {lessonOption.map(item => (
           <div key={item.id}>
             <div className="d-flex flex-column align-items-center me-2 mb-4">
               <p className='fw-bold'>{item.lessonTime} Minutes</p>
-              <button onClick={() => handleSelectOption(item.id, false)} className={`btn ${showButton[0] === item.id && !showButton[1] ? 'btn-success' : ''} border`}>1Lesson $ {item.lessonPrice}</button>
-              {item.numberOfLesson && <button onClick={() => handleSelectOption(item.id, true)} className={`btn border mt-2 ${showButton[0] === item.id && showButton[1] ? 'btn-success' : ''}`}>{item.numberOfLesson}Lesson $ {item.promotionPrice}</button>}
+              <button onClick={() => handleSelectOption(item.id, false)} className={`btn ${showButton[0] === item.id && !showButton[1] ? 'btn-success' : 'btn-secondary'} border`}>{`1Lesson $${item.lessonPrice}`}</button>
+              {item.numberOfLesson && <button onClick={() => handleSelectOption(item.id, true)} className={`btn border mt-2 ${showButton[0] === item.id && showButton[1] ? 'btn-success' : 'btn-secondary'}`}>{`${item.numberOfLesson}Lesson $${item.promotionPrice}`}</button>}
             </div>
           </div>
         ))}

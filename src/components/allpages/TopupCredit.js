@@ -3,14 +3,16 @@ import { ModalContext } from '../../contexts/ModalContext';
 import { Button, Modal } from 'react-bootstrap';
 import { AuthContext } from '../../contexts/AuthContext';
 import axios from 'axios';
+import { AlertMessageContext } from '../../contexts/AlertMessageContext';
 
 function TopupCredit() {
   const { showTopup, setShowTopup, setShowAddCreditCard } = useContext(ModalContext)
+  const { user } = useContext(AuthContext)
+  const { setShowAlertMessage, setMessageText } = useContext(AlertMessageContext)
   const [selectedCredit, setSelectedCredit] = useState(0)
   const [promotionCode, setPromotionCode] = useState('')
   const [paymentMethod, setPaymentMethod] = useState('')
   const [IsShowOther, setIsShowOther] = useState(false)
-  const { user } = useContext(AuthContext)
   const [creditCardData, setCreditCardData] = useState([])
 
   useEffect(() => {
@@ -42,6 +44,11 @@ function TopupCredit() {
   const handlePurchase = async () => {
     handleClose()
     await axios.put('/userAccount/topup', { credit: selectedCredit })
+    setMessageText('Top-up Successful')
+    setShowAlertMessage(true)
+    setTimeout(() => {
+      setShowAlertMessage(false)
+    }, 3000);
   }
 
   return (
@@ -89,8 +96,8 @@ function TopupCredit() {
                     Credit Card
                   </button>
                   {paymentMethod === 'creditcard' &&
-                    <select class="form-select" style={{ width: '200px' }} aria-label="Default select example">
-                      <option selected>Select Your Credit Card</option>
+                    <select className="form-select" style={{ width: '200px' }} aria-label="Default select example">
+                      <option>Select Your Credit Card</option>
                       {creditCardData.map(item => (
                         <option key={item.id} value={item.cardNumber}>{item.cardNumber}</option>
                       ))}

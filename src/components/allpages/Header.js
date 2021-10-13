@@ -22,7 +22,7 @@ function Header({ page }) {
             <div className="rectangle" ></div>
           </div>
           <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li><a className="dropdown-item" href="#">Find Lesson</a></li>
+            <li><Link to='/findTeacher' className='text-decoration-none'><span className="dropdown-item">Find Lesson</span></Link></li>
             <li><a className="dropdown-item" href="#">Exchange Group</a></li>
             <li><a className="dropdown-item" href="#">Interesting Board</a></li>
           </ul>

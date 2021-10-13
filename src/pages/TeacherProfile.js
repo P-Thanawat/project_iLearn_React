@@ -8,6 +8,7 @@ import StatisticChart from '../components/teacherProfile/StatisticChart'
 import ChooseLesson from '../components/teacherProfile/ChooseLesson'
 import BookingLesson from '../components/teacherProfile/BookingLesson'
 import { SendDataFromTeacherContext } from '../contexts/SendDataFromTeacherContext'
+import { ModalContext } from '../contexts/ModalContext'
 
 function TeacherProfile() {
   window.scroll(0, 0)
@@ -25,20 +26,22 @@ function TeacherProfile() {
   const [showChoosing, setShowChoosing] = useState(false);
   const [showBooking, setShowBooking] = useState(false);
   const [lessonIdForBooking, setLessonIdForBooking] = useState('')
+  const { setShowLessonForm } = useContext(ModalContext)
 
   useEffect(() => {
     const run = async () => {
       const teacherProfileId = window.location.href.split('/')[window.location.href.split('/').length - 1]
       const { data: { data: teacher } } = await axios.get(`/teacherProfile/${teacherProfileId}`)//? get teacherProfile from teacherProfileId
-      const { data: { data: userAccount } } = await axios.get(`/userAccount/${teacher.userAccountId}`)
+      const { data: { data: userAccount } } = await axios.get(`/userAccount/${teacher?.userAccountId}`)
       const { data: { data: specialist } } = await axios.get(`/teacherSubject/${teacherProfileId}`)
       const { data: { data: language } } = await axios.get(`/languageSpeak/${userAccount.id}`)
       const { data: { data: lessons } } = await axios.get(`/lessons/${teacherProfileId}`)
       const { data: { data: lessonRecord } } = await axios.get(`/lessonsRecord/${teacherProfileId}`)
 
+      //*fetch lessonOption
       const lessonOption = [];
       for (let i = 0; i <= lessons.length - 1; i++) {
-        const result = await axios.get(`/lessonOption/${lessons[i].id}`)
+        const result = await axios.get(`/lessonOption/${lessons?.[i]?.id}`)
         lessonOption.push(result);
       }
 
@@ -109,7 +112,7 @@ function TeacherProfile() {
 
   return (
     <div>
-
+      <BookingLesson /> {/* modal */}
       <ChooseLesson showChoosing={showChoosing} setShowChoosing={setShowChoosing} lessonOption={lessonOption} setShowBooking={setShowBooking} /> {/*modal*/}
 
       <Header />
@@ -139,7 +142,7 @@ function TeacherProfile() {
             </div>
             <div className="card p-4"> {/* lessons */}
               <h5 className='mb-4'>LESSONS</h5>
-              {lessonOption.map((item, index) => (<LessonCard key={index} lessonOption={item} />))}
+              {lessonOption.map((item, index) => (<LessonCard key={index} lessonOption={item} setShowChoosing={setShowChoosing} />))}
             </div>
             <div className="card p-4"> {/* static */}
               <h5>STATISTIC</h5>

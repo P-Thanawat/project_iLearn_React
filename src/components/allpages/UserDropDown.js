@@ -12,9 +12,8 @@ import { ModalContext } from '../../contexts/ModalContext';
 
 function UserDropDown({ teacherProfile }) {
   const { user } = useContext(AuthContext);
-  const { showLessonForm, setShowLessonForm } = useContext(ShowLessonFormContext)
   const { showTeacherForm, setShowTeacherForm } = useContext(TeacherFormContext)
-  const { showAvailableChoose, setShowAvailableChoose } = useContext(ModalContext)
+  const { showAvailableChoose, setShowAvailableChoose, showLessonForm, setShowLessonForm, setIsEditLesson } = useContext(ModalContext)
   console.log(`user`, user)
   console.log(`teacherProfile`, teacherProfile)
   const handleLogout = () => {
@@ -44,9 +43,9 @@ function UserDropDown({ teacherProfile }) {
                 <p className='text-secondary m-0'>{user.email}</p>
               </div>
               {user.typeAccount === 'learner' && <Link to={`/learnProfile/${user.id}`}><p onClick={() => setTimeout(() => { window.location.reload() }, 1000)} className='btn btn-secondary form-control' data-bs-dismiss="modal">My Profile</p></Link>}
-              {user.typeAccount === 'teacher' && <Link to={`/teacherProfile/${teacherProfile.id}`}><p onClick={() => setTimeout(() => { window.location.reload() }, 1000)} className='btn btn-secondary form-control' data-bs-dismiss="modal">My Profile</p></Link>}
+              {user.typeAccount === 'teacher' && <Link to={`/teacherProfile/${teacherProfile?.id}`}><p onClick={() => setTimeout(() => { window.location.reload() }, 1000)} className='btn btn-secondary form-control' data-bs-dismiss="modal">My Profile</p></Link>}
               {(user.typeAccount === 'teacher' && !teacherProfile) && <p className='btn btn-secondary form-control text-light' data-bs-dismiss="modal" onClick={() => setShowTeacherForm(true)}>Add Teacher Profile</p>}
-              {(user.typeAccount === 'teacher' && teacherProfile) && <p className='btn btn-secondary form-control text-light' data-bs-dismiss="modal" onClick={() => setShowLessonForm(true)}>Add Lesson</p>}
+              {(user.typeAccount === 'teacher' && teacherProfile) && <p className='btn btn-secondary form-control text-light' data-bs-dismiss="modal" onClick={() => { setIsEditLesson(false); setShowLessonForm(true); }}>Add Lesson</p>}
               <p className='btn btn-secondary form-control' onClick={() => setShowAvailableChoose(true)}>Account Setting</p>
               <p className='btn btn-danger form-control m-0' onClick={handleLogout}>Log out</p>
             </div>

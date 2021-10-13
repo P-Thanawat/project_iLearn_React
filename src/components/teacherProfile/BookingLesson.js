@@ -1,27 +1,24 @@
 import axios from 'axios';
 import React, { useContext, useEffect } from 'react'
-import { Button, Modal } from 'react-bootstrap';
+import { Modal } from 'react-bootstrap';
 import { useState } from 'react/cjs/react.development';
 import { SendDataFromTeacherContext } from '../../contexts/SendDataFromTeacherContext';
 import { showBookingContext } from '../../contexts/showBookingContext';
-import { TableDataContext } from '../../contexts/TableData';
 import MyCalendar from './BookingCalendar';
 
 function BookingLesson() {
 
-  const { showBooking, setShowBooking, lessonIdforBooking, setLessonIdforBooking } = useContext(showBookingContext)
-  const { lessons, setLessons } = useContext(SendDataFromTeacherContext)
-  const { tableData, setTableData } = useContext(TableDataContext)
-  const [chooseMonth, setChooseMonth] = useState(1)
+  const { showBooking, setShowBooking, lessonIdforBooking } = useContext(showBookingContext)
+  const { lessons } = useContext(SendDataFromTeacherContext)
   const [lessonOption, setLessonOption] = useState([])
 
   const lesson = lessons.filter(item => item.id === lessonIdforBooking)
 
 
   const handleClose = () => setShowBooking(false);
-  const handleShow = () => setShowBooking(true);
 
   useEffect(() => {
+
     const run = async () => {
       const { data: { data: lessonOption } } = await axios.get(`/lessonOption/${lessonIdforBooking}`)
 
@@ -29,7 +26,8 @@ function BookingLesson() {
 
       setLessonOption(lessonOption)
     }
-    run()
+    if (showBooking) run()
+
   }, [showBooking])
 
   return (
@@ -39,7 +37,7 @@ function BookingLesson() {
           <Modal.Title>Booking Lesson</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p className='fw-bold mb-3'>Lesson: {lesson?.[0]?.lessonName}</p>
+          <p className=' mb-3 fs-4'>Lesson: {lesson?.[0]?.lessonName}</p>
 
           <MyCalendar lesson={lesson} handleClose={handleClose} lessonOption={lessonOption} />
         </Modal.Body>

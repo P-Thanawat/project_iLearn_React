@@ -13,7 +13,7 @@ function ChooseLesson({ showChoosing, setShowChoosing, lessonOption, setShowBook
 
       <Modal show={showChoosing} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Booking Lesson</Modal.Title>
+          <Modal.Title>Choosing Lesson</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           {lessonOption.map((item, index) => (<LessonCard key={index} lessonOption={item} setShowBooking={setShowBooking} setShowChoosing={setShowChoosing} />))}

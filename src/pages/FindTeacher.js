@@ -74,7 +74,7 @@ function FindTeacher(props) {
 
       //* lessonsOrderDate
       const lessonsOrderDate = [...filteredTopicLessons]
-      lessonsOrderDate.sort((a, b) => (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()))
+      lessonsOrderDate.sort((a, b) => (new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()))
 
       console.log(`lessonsOrderDate`, lessonsOrderDate)
 

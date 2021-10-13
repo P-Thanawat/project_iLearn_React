@@ -2,6 +2,7 @@ import './App.css';
 import { useContext, useEffect, useState } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { AuthContext } from './contexts/AuthContext';
+import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
 
 import AddCard from './pages/AddCard';
 import Board from './pages/Board';
@@ -28,13 +29,13 @@ import TeacherForm from './components/allpages/TeacherForm';
 import AlertMessage from './components/allpages/AlertMessage';
 import LessonForm from './components/allpages/LessonForm';
 import { ShowLessonFormContext } from './contexts/showLessonFormContext';
-import BookingLesson from './components/teacherProfile/BookingLesson';
 import AvailableCalendar from './components/allpages/AvailableCalendar';
 import ReviewForm from './components/allpages/ReviewForm';
 import { ModalContext } from './contexts/ModalContext';
 import Payment from './pages/Payment';
 import TopupCredit from './components/allpages/TopupCredit';
 import AddCreditCard from './components/allpages/AddCreditCard';
+import AlertConfirm from './components/allpages/AlertConfirm';
 
 
 function App() {
@@ -102,22 +103,22 @@ function App() {
 
     <div className="App">
 
-      {user && <UserDropDown teacherProfile={teacherProfile} />} {/* modal */}
-      <RegisterForm /> {/* modal */}
-      <LoginForm /> {/* modal */}
-      <MoreInfo /> {/* modal */}
-      <Hamburger /> {/* modal */}
-      <MessengerBox /> {/* modal */}
-      <LearnerForm /> {/* modal */}
-      <TeacherForm /> {/* modal */}
-      <AlertMessage /> {/* modal */}
-      <LessonForm /> {/* modal */}
-      <BookingLesson /> {/* modal */}
-      <AvailableCalendar teacherProfile={teacherProfile} /> {/* modal */}
-      <ReviewForm lessonsRecord={lessonsRecord} /> {/* modal */}
-      <PaymentLesson /> {/* modal */}
-      <TopupCredit /> {/* modal */}
-      <AddCreditCard /> {/* modal */}
+      {user && <UserDropDown teacherProfile={teacherProfile} />}
+      <RegisterForm />
+      <LoginForm />
+      <MoreInfo />
+      <Hamburger />
+      <MessengerBox />
+      <LearnerForm />
+      <TeacherForm />
+      <AlertMessage />
+      <LessonForm />
+      <AvailableCalendar teacherProfile={teacherProfile} />
+      <ReviewForm lessonsRecord={lessonsRecord} />
+      <PaymentLesson />
+      <TopupCredit />
+      <AddCreditCard />
+      <AlertConfirm />
 
       <Switch>
         <Route path='/findTeacher' component={FindTeacher} />
