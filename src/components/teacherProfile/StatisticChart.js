@@ -14,11 +14,11 @@ function StatisticChart({ percentComplete }) {
     datasets: [
       {
         label: '#Completed Lessons',
-        data: [percentComplete?.[0]?.[0] + 1, percentComplete?.[1]?.[0] + 1, percentComplete?.[2]?.[0]],
+        data: [percentComplete?.[0]?.[0], percentComplete?.[1]?.[0], percentComplete?.[2]?.[0]],
         backgroundColor: [
-          'rgba(255, 99, 132, 0.2)',
-          'rgba(54, 162, 235, 0.2)',
-          'rgba(255, 206, 86, 0.2)',
+          'rgba(255, 99, 132, 0.7)',
+          'rgba(54, 162, 235, 0.7)',
+          'rgba(255, 206, 86, 0.7)',
 
         ],
         borderColor: [

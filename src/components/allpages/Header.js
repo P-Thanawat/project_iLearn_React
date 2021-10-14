@@ -53,7 +53,10 @@ function Header({ page }) {
         </div>
         <div className="messengerss">
           <i className="far fa-comment-dots"></i>
-          <p className='btn text-light' data-bs-toggle="modal" data-bs-target="#messengerBox">Messenger</p>
+          {user ? <p className='btn text-light'><Link to='/messenger' className='text-decoration-none text-white'>Messenger</Link></p> :
+            <p className='btn text-light'>Messenger</p>
+          }
+
         </div>
         <div className="login">
           {user ?

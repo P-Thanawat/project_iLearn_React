@@ -2,7 +2,7 @@ import React from 'react'
 import { Button, Modal } from 'react-bootstrap';
 import LessonCard from './LessonCard';
 
-function ChooseLesson({ showChoosing, setShowChoosing, lessonOption, setShowBooking }) {
+function ChooseLesson({ showChoosing, setShowChoosing, lessonOption, setShowBooking, userAccount }) {
 
 
   const handleClose = () => setShowChoosing(false);
@@ -16,7 +16,7 @@ function ChooseLesson({ showChoosing, setShowChoosing, lessonOption, setShowBook
           <Modal.Title>Choosing Lesson</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {lessonOption.map((item, index) => (<LessonCard key={index} lessonOption={item} setShowBooking={setShowBooking} setShowChoosing={setShowChoosing} />))}
+          {lessonOption.map((item, index) => (<LessonCard key={index} userAccount={userAccount} lessonOption={item} setShowBooking={setShowBooking} setShowChoosing={setShowChoosing} />))}
         </Modal.Body>
         <Modal.Footer>
         </Modal.Footer>

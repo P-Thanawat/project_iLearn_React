@@ -14,8 +14,8 @@ function UserDropDown({ teacherProfile }) {
   const { user } = useContext(AuthContext);
   const { showTeacherForm, setShowTeacherForm } = useContext(TeacherFormContext)
   const { showAvailableChoose, setShowAvailableChoose, showLessonForm, setShowLessonForm, setIsEditLesson } = useContext(ModalContext)
-  console.log(`user`, user)
-  console.log(`teacherProfile`, teacherProfile)
+  // console.log(`user`, user)
+  // console.log(`teacherProfile`, teacherProfile)
   const handleLogout = () => {
     removeToken();
     window.location.reload();

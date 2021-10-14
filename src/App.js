@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { AuthContext } from './contexts/AuthContext';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
+import { io } from "socket.io-client";
 
 import AddCard from './pages/AddCard';
 import Board from './pages/Board';
@@ -40,13 +41,19 @@ import AlertConfirm from './components/allpages/AlertConfirm';
 
 function App() {
 
+  // const socket = io("http://localhost:5000");
+  // socket.on("connect", () => {
+  //   console.log(socket.id); // x8WIv7-mJelg7on_ALbx
+  // });
+  // socket.on("disconnect", () => {
+  //   console.log(socket.id); // undefined
+  // });
+
   const { user } = useContext(AuthContext);
   const role = user ? 'user' : 'guest'
   const { showLearnerForm, setShowLearnerForm } = useContext(showLearnerFormContext)
-  const { showTeacherForm, setShowTeacherForm } = useContext(TeacherFormContext)
-  const { showLessonForm, setShowLessonForm } = useContext(ShowLessonFormContext)
   const [teacherProfile, setTeacherProfile] = useState('')
-  const { showReviewForm, setShowReviewForm } = useContext(ModalContext)
+  const { showReviewForm, setShowReviewForm, setShowTeacherForm, setShowLessonForm } = useContext(ModalContext)
   const [lessonsRecord, setLessonsRecord] = useState({})
 
 
@@ -54,23 +61,27 @@ function App() {
     const run = async () => {
       try {
         if (user) {
-          console.log(`user`, user)
+          // console.log(`user`, user)
           const { data: { data: teacherProfile } } = await axios.get(`/teacherProfile/byUserId/${user.id}`)
           const { data: { data: learnerProfile } } = await axios.get(`/learnerProfile/byUserId/${user.id}`)
           const { data: { data: lessons } } = await axios.get(`/lessons/${teacherProfile?.id}`)
-          console.log(`learnerProfile`, learnerProfile)
-          console.log(`teacherProfile`, teacherProfile)
+          // console.log(`learnerProfile`, learnerProfile)
+          // console.log(`teacherProfile`, teacherProfile)
           setTeacherProfile(teacherProfile)
           // console.log(`lessons`, lessons)
 
           if (user.typeAccount === 'learner' && !learnerProfile) { //learner log in and don't have learnerProfile
-            console.log('showLearn')
+            // console.log('showLearn')
             setShowLearnerForm(true)
           }
           if (user.typeAccount === 'teacher' && !teacherProfile) { //teacher log in and don't have teacherProfile
             console.log('showTeacher')
             setShowTeacherForm(true)
           }
+          console.log(`user.typeAccount`, user.typeAccount)
+          console.log(`teacherProfile`, teacherProfile)
+          console.log(`lessons.length`, lessons.length)
+
           if (user.typeAccount === 'teacher' && teacherProfile && lessons.length === 0) { //no lessons
             console.log('showLessonForm')
             setShowLessonForm(true)
@@ -90,6 +101,7 @@ function App() {
           })
 
         }
+
 
 
       }
@@ -134,6 +146,7 @@ function App() {
         <Route path='/' exact component={Home} />
         <Redirect to="/" />
       </Switch>
+
     </div>
 
   );

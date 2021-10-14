@@ -24,6 +24,9 @@ function AddCreditCard() {
     await axios.post('/creditCard', { cardNumber, expiration, securityCode, confirmCard: false })
     setMessageText('Add Credit Card Successful')
     setShowAlertMessage(true)
+    setTimeout(() => {
+      window.location.reload()
+    }, 1000);
   }
 
   const handleSetCardNumber = e => {

@@ -19,7 +19,7 @@ function TopupCredit() {
     const run = async () => {
       if (user) {
         const { data: { data: creditCardData } } = await axios.get(`/creditCard/${user.id}`)
-        console.log(`creditCardData`, creditCardData)
+        // console.log(`creditCardData`, creditCardData)
         setCreditCardData(creditCardData)
       }
     }

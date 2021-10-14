@@ -4,9 +4,10 @@ import { TeacherFormContext } from '../../contexts/showTeacherFormContext';
 import { Button, Modal } from 'react-bootstrap';
 import axios from '../../config/axios';
 import { AlertMessageContext } from '../../contexts/AlertMessageContext';
+import { ModalContext } from '../../contexts/ModalContext';
 
 function TeacherForm() {
-  const { showTeacherForm, setShowTeacherForm } = useContext(TeacherFormContext)
+  const { showTeacherForm, setShowTeacherForm } = useContext(ModalContext)
   const [introduceContent, setIntroduceContent] = useState('')
   const [presentText, setPresentText] = useState('')
   const [aboutTeacher, setAboutTeacher] = useState('')
@@ -63,6 +64,7 @@ function TeacherForm() {
         setShowAlertMessage(true);
         setTimeout(() => {
           setShowAlertMessage(false);
+          window.location.reload()
         }, 2000);
       }
     }

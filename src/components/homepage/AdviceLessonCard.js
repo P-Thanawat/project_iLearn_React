@@ -7,14 +7,15 @@ function Box(props) {
 
   const review = reviews.filter(item => item.lessonsId === lessons.id)
   const reviewAvg = review.reduce((acc, item) => ((acc + +item.reviewPoint)), 0) / review.length;
+  console.log(`lessons`, lessons)
   return (
     <div className="box">
       <Link to={`/teacherProfile/${lessons?.teacherProfileId}`} style={{ textDecoration: 'none' }} >
-        <img src={lessons?.lessonPicutre} alt="" />
+        <img src={lessons?.lessonPicture} alt="" />
         <p className='lessonName'>{lessons?.lessonName}</p>
         <p className='lessonTeacherName'>{lessons?.teacherProfile.userAccount.firstName} {lessons?.teacherProfile.userAccount.lastName}</p>
         <div className="d-flex justify-content-start align-items-start">
-          <p className='lessonReviewPoint'>{reviewAvg || ''}</p>
+          <p className='lessonReviewPoint'>{reviewAvg ? reviewAvg.toFixed(2) : ''}</p>
           <div>
             {reviewAvg >= 1 && <i className="fa fa-star starstarstar"></i>}
             {reviewAvg >= 2 && <i className="fa fa-star starstarstar"></i>}

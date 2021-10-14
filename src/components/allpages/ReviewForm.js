@@ -13,13 +13,15 @@ function ReviewForm({ lessonsRecord }) {
   const [tag, setTag] = useState([])
   const { user } = useContext(AuthContext)
 
-  console.log(`lessonsRecord`, lessonsRecord)
+  // console.log(`lessonsRecord`, lessonsRecord)
   const handleSubmit = async e => {
     e.preventDefault();
     setShowReviewForm(false)
     await axios.post('/reviews', { reviewPoint: lessonPoint, reviewMessage: comment, fisrtTag: tag?.[0], secondTag: tag?.[1], thirdTag: tag?.[2], lessonsId: lessonsRecord.lessonsId, userAccountId: user.id })
     console.log(`lessonsRecord.lessonId`, lessonsRecord.lessonId)
     await axios.put(`/lessonsRecord/${lessonsRecord.id}`, { completed: true })
+    window.location.reload()
+
 
   }
   return (
@@ -44,11 +46,11 @@ function ReviewForm({ lessonsRecord }) {
                 <label htmlFor="" className='input-group-text'>Comment</label>
                 <textarea type="text" className='form-control' value={comment} onChange={e => setComment(e.target.value)} />
               </div>
-              <button type="button" className='btn btn-secondary me-1' onClick={() => setTag(cur => [...cur, 'Excellent'])}>Excellent</button>
-              <button type="button" className='btn btn-secondary me-1' onClick={() => setTag(cur => [...cur, 'preparedness'])}>preparedness</button>
-              <button type="button" className='btn btn-secondary me-1' onClick={() => setTag(cur => [...cur, 'fun '])}>fun </button>
-              <button type="button" className='btn btn-secondary me-1' onClick={() => setTag(cur => [...cur, 'admiration'])}>admiration</button>
-              <button type="button" className='btn btn-secondary me-1' onClick={() => setTag(cur => [...cur, 'brilliant'])}>brilliant</button>
+              <button type="button" className={`btn btn-${tag.includes('Excellent') ? 'success' : 'secondary'} me-1`} onClick={() => setTag(cur => [...cur, 'Excellent'])}>Excellent</button>
+              <button type="button" className={`btn btn-${tag.includes('preparedness') ? 'success' : 'secondary'} me-1`} onClick={() => setTag(cur => [...cur, 'preparedness'])}>preparedness</button>
+              <button type="button" className={`btn btn-${tag.includes('fun') ? 'success' : 'secondary'} me-1`} onClick={() => setTag(cur => [...cur, 'fun'])}>fun</button>
+              <button type="button" className={`btn btn-${tag.includes('admiration') ? 'success' : 'secondary'} me-1`} onClick={() => setTag(cur => [...cur, 'admiration'])}>admiration</button>
+              <button type="button" className={`btn btn-${tag.includes('brilliant') ? 'success' : 'secondary'} me-1`} onClick={() => setTag(cur => [...cur, 'brilliant'])}>brilliant</button>
               <div className="d-flex justify-content-end mt-3">
                 <button className='btn btn-secondary' type='submit' className='btn btn-success'>SEND</button>
               </div>

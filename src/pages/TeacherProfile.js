@@ -9,6 +9,10 @@ import ChooseLesson from '../components/teacherProfile/ChooseLesson'
 import BookingLesson from '../components/teacherProfile/BookingLesson'
 import { SendDataFromTeacherContext } from '../contexts/SendDataFromTeacherContext'
 import { ModalContext } from '../contexts/ModalContext'
+import { AuthContext } from '../contexts/AuthContext'
+import { AlertMessageContext } from '../contexts/AlertMessageContext'
+import { useHistory } from "react-router-dom";
+import { DataForMessengerContext } from '../contexts/DataForMessenger'
 
 function TeacherProfile() {
   window.scroll(0, 0)
@@ -26,7 +30,11 @@ function TeacherProfile() {
   const [showChoosing, setShowChoosing] = useState(false);
   const [showBooking, setShowBooking] = useState(false);
   const [lessonIdForBooking, setLessonIdForBooking] = useState('')
-  const { setShowLessonForm } = useContext(ModalContext)
+  const { setShowLessonForm, setShowLogin } = useContext(ModalContext)
+  const { user } = useContext(AuthContext)
+  const { setMessageText, setShowAlertMessage } = useContext(AlertMessageContext)
+  const history = useHistory()
+  const { dataForMessenger, setDataForMessenger } = useContext(DataForMessengerContext)
 
   useEffect(() => {
     const run = async () => {
@@ -109,11 +117,47 @@ function TeacherProfile() {
 
   }, [])
 
+  const handleBookingLesson = () => {
+    if (user?.typeAccount === 'learner') {
+      setShowChoosing(true)
+
+    }
+    else if (!user) {
+      setShowLogin(true)
+    }
+    else {
+      setMessageText('Only learner can book the lesson')
+      setShowAlertMessage(true)
+      setTimeout(() => {
+        setShowAlertMessage(false)
+      }, 3000);
+    }
+  }
+
+  const handleContactTeacher = async () => {
+    if (user && user?.id !== userAccount?.id) {
+      // console.log(`dataForMessenger`, dataForMessenger)
+      setDataForMessenger({ message: `I'm interested in your lesson!`, messageFrom: user.id, messageTo: userAccount.id })
+      // await axios.post('userMessenger', { message: `I'm interested in your lesson!`, messageFrom: user.id, messageTo: userAccount.id })
+      history.push('/messenger')
+    }
+    else if (!user) setShowLogin(true)
+    else {
+      setMessageText(`You can't contact yourself.`)
+      setShowAlertMessage(true)
+      setTimeout(() => {
+        setShowAlertMessage(false)
+      }, 3000);
+    }
+
+
+  }
+
 
   return (
     <div>
       <BookingLesson /> {/* modal */}
-      <ChooseLesson showChoosing={showChoosing} setShowChoosing={setShowChoosing} lessonOption={lessonOption} setShowBooking={setShowBooking} /> {/*modal*/}
+      <ChooseLesson userAccount={userAccount} showChoosing={showChoosing} setShowChoosing={setShowChoosing} lessonOption={lessonOption} setShowBooking={setShowBooking} /> {/*modal*/}
 
       <Header />
       <div className="container">
@@ -142,7 +186,7 @@ function TeacherProfile() {
             </div>
             <div className="card p-4"> {/* lessons */}
               <h5 className='mb-4'>LESSONS</h5>
-              {lessonOption.map((item, index) => (<LessonCard key={index} lessonOption={item} setShowChoosing={setShowChoosing} />))}
+              {lessonOption.map((item, index) => (<LessonCard key={index} userAccount={userAccount} lessonOption={item} setShowChoosing={setShowChoosing} />))}
             </div>
             <div className="card p-4"> {/* static */}
               <h5>STATISTIC</h5>
@@ -158,7 +202,7 @@ function TeacherProfile() {
                 {avgPoint >= 5 && <img className='star' src="https://cdn-icons-png.flaticon.com/512/616/616489.png" alt="" />}
                 {avgPoint - Math.floor(avgPoint) > 0 && <img className='star' src="https://cdn-icons-png.flaticon.com/512/2107/2107737.png" alt="" />}
                 <div className='ms-2 d-flex'>
-                  <p className='text-success me-1 fw-bold'>{avgPoint.toFixed(2)}</p>
+                  <p className='text-success me-1 fw-bold'>{avgPoint ? avgPoint.toFixed(2) : '0'}</p>
                   <p>({reviews.length})</p>
                 </div>
               </div>
@@ -171,8 +215,8 @@ function TeacherProfile() {
             <div className="card p-4 m-2 mt-4"> {/* recommended lesson */}
               <span>RECOMMENDED LESSONS</span>
               <h5>{teacher.recommendLesson}</h5>
-              <button className='btn btn-danger mb-3 mt-2' onClick={() => setShowChoosing(true)}>BOOK NOW</button>
-              <button className='btn btn-secondary'>CONTACT TEACHER</button>
+              <button className='btn btn-danger mb-3 mt-2' onClick={handleBookingLesson}>BOOK NOW</button>
+              <button className='btn btn-secondary' onClick={handleContactTeacher}>CONTACT TEACHER</button>
             </div>
             <div className="card p-4 m-2 d-flex justify-content-center align-items-center"> {/*  available time */}
               {/* <table className='availableTable'>

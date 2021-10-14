@@ -10,7 +10,7 @@ import AvailableCalendar from './AvailableCalendar';
 function LessonForm() {
   const [lessonName, setLessonName] = useState('')
   const [lessonDetail, setLessonDetail] = useState('')
-  const [lessonPicutre, setLessonPicutre] = useState('')
+  const [lessonPicture, setLessonPicture] = useState('')
   const [TypeTag, setTypeTag] = useState([])
   const [lessonTime, setLessonTime] = useState([])
   const [lessonPrice, setLessonPrice] = useState([])
@@ -35,7 +35,7 @@ function LessonForm() {
     else {
       setLessonName('')
       setLessonDetail('')
-      setLessonPicutre('')
+      setLessonPicture('')
       setTypeTag([])
       setLessonTime([])
       setLessonPrice([])
@@ -47,7 +47,7 @@ function LessonForm() {
 
   const handleChangePicture = e => {
     e.preventDefault()
-    setLessonPicutre(e.target.files[0])
+    setLessonPicture(e.target.files[0])
   }
 
   const handleSumbit = async e => {
@@ -58,7 +58,7 @@ function LessonForm() {
     const formData = new FormData();
     formData.append('lessonName', lessonName) //null is changed to 'null', so it has to be checked beforehand
     lessonDetail && formData.append('lessonDetail', lessonDetail)
-    lessonPicutre && formData.append('lessonPicutre', lessonPicutre)
+    lessonPicture && formData.append('lessonPicture', lessonPicture)
     TypeTag[0] && formData.append('firstTypeTag', TypeTag[0])
     TypeTag[1] && formData.append('secondTypeTag', TypeTag[1])
     TypeTag[2] && formData.append('thirdTypeTag', TypeTag[2])
@@ -89,7 +89,7 @@ function LessonForm() {
 
     setLessonName('')
     setLessonDetail('')
-    setLessonPicutre('')
+    setLessonPicture('')
     setTypeTag([])
     setLessonTime([])
     setLessonPrice([])
@@ -117,7 +117,7 @@ function LessonForm() {
     const formData = new FormData();
     lessonName && formData.append('lessonName', lessonName) //null is changed to 'null', so it has to be checked beforehand
     lessonDetail && formData.append('lessonDetail', lessonDetail)
-    lessonPicutre && formData.append('lessonPicutre', lessonPicutre ?? null)
+    lessonPicture && formData.append('lessonPicture', lessonPicture ?? null)
     TypeTag[0] && formData.append('firstTypeTag', TypeTag[0])
     TypeTag[1] && formData.append('secondTypeTag', TypeTag[1])
     TypeTag[2] && formData.append('thirdTypeTag', TypeTag[2])
@@ -172,9 +172,25 @@ function LessonForm() {
               <label htmlFor="" className='input-group-text'>Lesson Picture</label>
               <input type="file" onChange={handleChangePicture} className='form-control' />
             </div>
-            <div className="input-group mb-3">
+            {/* <div className="input-group mb-3">
               <label htmlFor="" className="input-group-text">Lesson Tag 1</label>
               <input type="text" className='form-control' value={TypeTag[0]} onChange={e => setTypeTag(cur => [e.target.value, cur[1], cur[2]])} />
+            </div> */}
+            <div className="input-group mb-3">
+              <select onChange={e => setTypeTag(cur => [e.target.value, cur[1], cur[2]])} className="form-select" aria-label="Default select example">
+                {TypeTag[0] || <option >Lesson Tag 1</option>}
+                <option value="Data Science">Data Science</option>
+                <option value="Business">Business</option>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Information Technology">Information Technology</option>
+                <option value="Language Learning">Language Learning</option>
+                <option value="Health">Health</option>
+                <option value="Personal Development">Personal Development</option>
+                <option value="Physical Science and Engineering">Physical Science and Engineering</option>
+                <option value="Social Sciences">Social Sciences</option>
+                <option value="Arts and Humanities">Arts and Humanities</option>
+                <option value="Math and Logic">Math and Logic</option>
+              </select>
             </div>
             {TypeTag[0] && <div className="input-group mb-3">
               <label htmlFor="" className="input-group-text">Lesson Tag 2</label>

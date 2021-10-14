@@ -11,29 +11,32 @@ import { ShowBookingProvider } from './contexts/showBookingContext';
 import { SendDataFromTeacherProvider } from './contexts/SendDataFromTeacherContext';
 import { TableDataProvider } from './contexts/TableData';
 import { ModalProvider } from './contexts/ModalContext';
+import { DataFromMessengerProvider } from './contexts/DataForMessenger';
 
 ReactDOM.render(
-  <ModalProvider >
-    <TableDataProvider>
-      <SendDataFromTeacherProvider>
-        <ShowBookingProvider>
-          <ShowLessonFormProvider>
-            <AlertMessageProvider>
-              <TeacherFormProvider>
-                <ShowLearnerFormProvider>
-                  <AuthContextProvider>
-                    <BrowserRouter>
-                      <App />
-                    </BrowserRouter>
-                  </AuthContextProvider>
-                </ShowLearnerFormProvider>
-              </TeacherFormProvider>
-            </AlertMessageProvider>
-          </ShowLessonFormProvider>
-        </ShowBookingProvider>
-      </SendDataFromTeacherProvider>
-    </TableDataProvider>
-  </ModalProvider>
+  <DataFromMessengerProvider>
+    <ModalProvider >
+      <TableDataProvider>
+        <SendDataFromTeacherProvider>
+          <ShowBookingProvider>
+            <ShowLessonFormProvider>
+              <AlertMessageProvider>
+                <TeacherFormProvider>
+                  <ShowLearnerFormProvider>
+                    <AuthContextProvider>
+                      <BrowserRouter>
+                        <App />
+                      </BrowserRouter>
+                    </AuthContextProvider>
+                  </ShowLearnerFormProvider>
+                </TeacherFormProvider>
+              </AlertMessageProvider>
+            </ShowLessonFormProvider>
+          </ShowBookingProvider>
+        </SendDataFromTeacherProvider>
+      </TableDataProvider>
+    </ModalProvider>
+  </DataFromMessengerProvider>
   ,
   document.getElementById('root')
 );
