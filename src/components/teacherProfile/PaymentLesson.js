@@ -1,48 +1,52 @@
 import React, { useContext, useState } from 'react'
 import { ModalContext } from '../../contexts/ModalContext'
 import { Button, Modal } from 'react-bootstrap';
-import axios from 'axios';
+import axios from '../../config/axios';
 import { AlertMessageContext } from '../../contexts/AlertMessageContext';
 
 function PaymentLesson() {
   const { showPayment, setShowPayment, paymentData: { learnData, lesson, user, lessonPrice }, setPaymentData, setShowTopup } = useContext(ModalContext)
   const { setMessageText, setShowAlertMessage } = useContext(AlertMessageContext)
   const [paymentMethod, setPaymentMethod] = useState('')
-  console.log(`lesson`, lesson)
+
   const handleClose = () => setShowPayment(false);
   const handleShow = () => setShowPayment(true);
 
   const handlePay = async () => {
-    handleClose()
+    try {
+      handleClose()
 
-    if (paymentMethod === 'credit') {
-      const { data: { data: userAccount } } = await axios.get(`/userAccount/${user.id}`)
-      if (userAccount.credit > lessonPrice) {
-        await axios.put('/userAccount/topup', { credit: -(+lessonPrice) })
+      if (paymentMethod === 'credit') {
+        const { data: { data: userAccount } } = await axios.get(`/userAccount/${user.id}`)
+        if (userAccount.credit > lessonPrice) {
+          await axios.put('/userAccount/topup', { credit: -(+lessonPrice) })
+        }
+        else {
+          setMessageText('Your Credit is not enough')
+          setShowAlertMessage(true)
+          setTimeout(() => {
+            setShowAlertMessage(false)
+          }, 3000);
+          return;
+        }
       }
-      else {
-        setMessageText('Your Credit is not enough')
-        setShowAlertMessage(true)
-        setTimeout(() => {
-          setShowAlertMessage(false)
-        }, 3000);
-        return;
+
+
+
+      for (let i = 0; i <= learnData.length - 1; i++) {
+        await axios.post('/lessonsRecord', { startLearnTime: learnData?.[i]?.start, endLearnTime: learnData?.[i]?.end, completed: false, userAccountId: user?.id, lessonsId: lesson?.[0]?.id })
+        await axios.post('userMessenger', { message: `Learner: ${user.firstName} ${user.lastName} have booked your lesson ${lesson[0].lessonName}. Start Learn Time is ${learnData?.[i]?.start} and End Learn Time is ${learnData?.[i]?.end}.`, messageFrom: 1, messageTo: lesson?.[0]?.teacherProfile?.userAccountId })
       }
+      await axios.post('userMessenger', { message: 'I have just booked your lesson, Thank you.', messageFrom: user.id, messageTo: lesson?.[0]?.teacherProfile?.userAccountId })
+      setMessageText('You have just sent booking request to teacher')
+      setShowAlertMessage(true)
+      setTimeout(() => {
+        setShowAlertMessage(false)
+      }, 3000);
     }
-
-
-
-    for (let i = 0; i <= learnData.length - 1; i++) {
-      await axios.post('/lessonsRecord', { startLearnTime: learnData?.[i]?.start, endLearnTime: learnData?.[i]?.end, completed: false, userAccountId: user?.id, lessonsId: lesson?.[0]?.id })
-      await axios.post('userMessenger', { message: `Learner: ${user.firstName} ${user.lastName} have booked your lesson ${lesson[0].lessonName}. Start Learn Time is ${learnData?.[i]?.start} and End Learn Time is ${learnData?.[i]?.end}.`, messageFrom: 1, messageTo: lesson?.[0]?.teacherProfile?.userAccountId })
+    catch (err) {
+      console.log(err.message);
     }
-    await axios.post('userMessenger', { message: 'I have just booked your lesson, Thank you.', messageFrom: user.id, messageTo: lesson?.[0]?.teacherProfile?.userAccountId })
-    setMessageText('You have just sent booking request to teacher')
-    setShowAlertMessage(true)
-    setTimeout(() => {
-      setShowAlertMessage(false)
-    }, 3000);
-
   }
 
   const handleTopup = () => {

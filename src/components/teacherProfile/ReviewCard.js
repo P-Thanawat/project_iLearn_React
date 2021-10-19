@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { Link } from 'react-router-dom';
 
 function ReviewCard({ reviews }) {
   const isHalfStar = reviews.reviewPoint - Math.floor(reviews.reviewPoint) > 0;
@@ -7,10 +8,13 @@ function ReviewCard({ reviews }) {
     <div>
       <div className="card p-4 m-2">
         <div className="row">
+
+
           <div className="col-2 d-flex flex-column align-items-center justify-content-center">
-            <img src={reviews.userAccount.profilePicture} alt="profilePicture" className='reviewProfilePicture' />
+            <Link to={`/learnProfile/${reviews.userAccount.id}`} style={{ textDecoration: 'none' }} ><img src={reviews.userAccount.profilePicture} alt="profilePicture" className='reviewProfilePicture' /></Link>
             <span className='mt-2'>{reviews.userAccount.firstName}</span>
           </div>
+
           <div className="col-10 d-flex flex-column">
             <div className="d-flex align-items-center justify-content-between">
               <div className="d-flex align-items-center">

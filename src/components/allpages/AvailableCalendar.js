@@ -21,83 +21,94 @@ function AvailableCalendar({ teacherProfile }) {
   // fetch events data
   useEffect(() => {
     const run = async () => {
-      const { data: { data: availableData } } = await axios.get(`/available/${teacherProfile.id}`)
-      console.log(`availableData`, availableData)
-      const initialEvent = [];
+      try {
+        const { data: { data: availableData } } = await axios.get(`/available/${teacherProfile.id}`)
+        console.log(`availableData`, availableData)
+        const initialEvent = [];
 
-      availableData.forEach(item => {
-        initialEvent.push({
-          start: moment(new Date(item?.startAvailableTime)).toDate(),
-          end: moment(new Date(item?.endAvailableTime)).toDate(),
-          title: '',
-          id: item?.id,
+        availableData.forEach(item => {
+          initialEvent.push({
+            start: moment(new Date(item?.startAvailableTime)).toDate(),
+            end: moment(new Date(item?.endAvailableTime)).toDate(),
+            title: '',
+            id: item?.id,
+          })
         })
-      })
-      console.log(`initialEvent`, initialEvent)
-      setEvents(initialEvent)
+        console.log(`initialEvent`, initialEvent)
+        setEvents(initialEvent)
+      }
+      catch (err) {
+        console.log(err.message);
+      }
     }
     teacherProfile && run()
   }, [showAvailableChoose])
 
   const handleSet = async () => {
-    handleClose();
-    await axios.delete(`/available/${teacherProfile.id}`)
-    for (let i = 0; i <= events.length - 1; i++) {
-      await axios.post('/available', { startAvailableTime: events?.[i]?.start, endAvailableTime: events?.[i]?.end, teacherProfileId: teacherProfile.id })
-    }
-    setMessageText('Setting Available Time Successful')
-    setShowAlertMessage(true)
-    setTimeout(() => {
-      setShowAlertMessage(false)
-    }, 3000);
-
-  }
-
-
-
-  const handleSelect = async ({ start, end }) => {
-    // const title = window.prompt('New Event name')
-    console.log(`start`, start)
-    console.log(`end`, end)
-    // console.log(`title`, title)
-    let IsRepeat = false;
-    events.forEach((item) => {
-      if (start >= item.start && start < item.end) {
-        console.log('start break');
-        IsRepeat = true;
+    try {
+      handleClose();
+      await axios.delete(`/available/${teacherProfile.id}`)
+      for (let i = 0; i <= events.length - 1; i++) {
+        await axios.post('/available', { startAvailableTime: events?.[i]?.start, endAvailableTime: events?.[i]?.end, teacherProfileId: teacherProfile.id })
       }
-      if (end > item.start && end <= item.end) {
-        console.log('end break');
-        IsRepeat = true;
-      }
-      if (start < item.start && end > item.end) {
-        console.log('break');
-        IsRepeat = true;
-      }
-    })
-    if (!IsRepeat) {
-      setEvents(cur => ([
-
-        {
-          start,
-          end,
-          title: '',
-          id: Date.now(),
-        }, ...cur,
-      ]
-      ))
-
-
-    }
-    if (IsRepeat) {
-      setMessageText('You are re-choosing on your time')
+      setMessageText('Setting Available Time Successful')
       setShowAlertMessage(true)
       setTimeout(() => {
         setShowAlertMessage(false)
       }, 3000);
     }
+    catch (err) {
+      console.log(err.message);
+    }
+  }
 
 
+
+  const handleSelect = async ({ start, end }) => {
+    try {
+      console.log(`start`, start)
+      console.log(`end`, end)
+      let IsRepeat = false;
+      events.forEach((item) => {
+        if (start >= item.start && start < item.end) {
+          console.log('start break');
+          IsRepeat = true;
+        }
+        if (end > item.start && end <= item.end) {
+          console.log('end break');
+          IsRepeat = true;
+        }
+        if (start < item.start && end > item.end) {
+          console.log('break');
+          IsRepeat = true;
+        }
+      })
+      if (!IsRepeat) {
+        setEvents(cur => ([
+
+          {
+            start,
+            end,
+            title: '',
+            id: Date.now(),
+          }, ...cur,
+        ]
+        ))
+
+
+      }
+      if (IsRepeat) {
+        setMessageText('You are re-choosing on your time')
+        setShowAlertMessage(true)
+        setTimeout(() => {
+          setShowAlertMessage(false)
+        }, 3000);
+      }
+
+    }
+    catch (err) {
+      console.log(err.message);
+    }
   }
 
   const handleEvent = (event) => {

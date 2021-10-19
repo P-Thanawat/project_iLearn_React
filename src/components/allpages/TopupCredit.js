@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { ModalContext } from '../../contexts/ModalContext';
 import { Button, Modal } from 'react-bootstrap';
 import { AuthContext } from '../../contexts/AuthContext';
-import axios from 'axios';
+import axios from '../../config/axios';
 import { AlertMessageContext } from '../../contexts/AlertMessageContext';
 
 function TopupCredit() {
@@ -17,10 +17,15 @@ function TopupCredit() {
 
   useEffect(() => {
     const run = async () => {
-      if (user) {
-        const { data: { data: creditCardData } } = await axios.get(`/creditCard/${user.id}`)
-        // console.log(`creditCardData`, creditCardData)
-        setCreditCardData(creditCardData)
+      try {
+        if (user) {
+          const { data: { data: creditCardData } } = await axios.get(`/creditCard/${user.id}`)
+          // console.log(`creditCardData`, creditCardData)
+          setCreditCardData(creditCardData)
+        }
+      }
+      catch (err) {
+        console.log(err.message);
       }
     }
     run()
@@ -42,13 +47,18 @@ function TopupCredit() {
   }
 
   const handlePurchase = async () => {
-    handleClose()
-    await axios.put('/userAccount/topup', { credit: selectedCredit })
-    setMessageText('Top-up Successful')
-    setShowAlertMessage(true)
-    setTimeout(() => {
-      setShowAlertMessage(false)
-    }, 3000);
+    try {
+      handleClose()
+      await axios.put('/userAccount/topup', { credit: selectedCredit })
+      setMessageText('Top-up Successful')
+      setShowAlertMessage(true)
+      setTimeout(() => {
+        setShowAlertMessage(false)
+      }, 3000);
+    }
+    catch (err) {
+      console.log(err.message);
+    }
   }
 
   return (

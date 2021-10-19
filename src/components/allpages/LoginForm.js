@@ -22,24 +22,29 @@ function LoginForm() {
   const handleShow = () => setShowLogin(true);
 
   const handleClickNext = async () => {
-    const { data: { data: checkEmail } } = await axios.post('/checkEmail', { email })
-    if (!checkEmail) {
-      setMessageText('Email is not found')
-      setShowAlertMessage(true)
-      setTimeout(() => {
-        setShowAlertMessage(false)
-      }, 3000);
+    try {
+      const { data: { data: checkEmail } } = await axios.post('/checkEmail', { email })
+      if (!checkEmail) {
+        setMessageText('Email is not found')
+        setShowAlertMessage(true)
+        setTimeout(() => {
+          setShowAlertMessage(false)
+        }, 3000);
+      }
+      if (checkEmail) {
+        setButtonText('Log in')
+        setHidePassword(false)
+      }
+      if (hidePassword === false) {
+        const result = await axios.post('/login', { email, password, remember })
+        console.log(`result`, result)
+        setToken(result.data.token)
+        setUser(jwtDecode(result.data.token))
+        window.location.reload()
+      }
     }
-    if (checkEmail) {
-      setButtonText('Log in')
-      setHidePassword(false)
-    }
-    if (hidePassword === false) {
-      const result = await axios.post('/login', { email, password, remember })
-      console.log(`result`, result)
-      setToken(result.data.token)
-      setUser(jwtDecode(result.data.token))
-      window.location.reload()
+    catch (err) {
+      console.log(err.message);
     }
   }
 

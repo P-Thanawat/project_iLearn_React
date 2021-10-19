@@ -1,13 +1,15 @@
 import axios from '../config/axios'
 import React, { useState } from 'react'
 import { useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useHistory } from 'react-router-dom'
 import { useEffect } from 'react/cjs/react.development'
 import Header from '../components/allpages/Header'
 import { AuthContext } from '../contexts/AuthContext'
 import '../css/learnerProfile.css'
 import { ModalContext } from '../contexts/ModalContext'
 import { Button, Modal } from 'react-bootstrap';
+import { DataForMessengerContext } from '../contexts/DataForMessenger'
+import { AlertMessageContext } from '../contexts/AlertMessageContext'
 
 function LearnProfile() {
   const userId = window.location.href.split('/')[window.location.href.split('/').length - 1]
@@ -41,86 +43,102 @@ function LearnProfile() {
   const [IsEditComment, setIsEditComment] = useState(false)
   const [IsEditCommentReply, setIsEditCommentReply] = useState(false)
   const [editCommentReplyId, setEditCommentReplyId] = useState('')
+  const { dataForMessenger, setDataForMessenger } = useContext(DataForMessengerContext)
+  const history = useHistory();
+  const { setMessageText, setShowAlertMessage } = useContext(AlertMessageContext)
 
   const handleClose = () => setShowAlertConfirm(false);
   const handleShow = () => setShowAlertConfirm(true);
 
   useEffect(() => {
     const run = async () => {
-      const { data: { data: learnUser } } = await axios.get(`/userAccount/${userId}`)
-      const { data: { data: learnProfile } } = await axios.get(`/LearnerProfile/${userId}`)
-      const { data: { data: profilePost } } = await axios.get(`/profilePost/${learnProfile?.id}`)
-      const { data: { data: following } } = await axios.get(`/following/${learnProfile?.id}`)
-      const { data: { data: follower } } = await axios.get(`/follower/${learnProfile?.id}`)
-      const { data: { data: learnSkill } } = await axios.get(`/learnerSkill/${learnProfile?.id}`)
-      const { data: { data: lessonsRecord } } = await axios.get(`/lessonsRecord/byUserAccountId/${userId}`)
+      try {
+        const { data: { data: learnUser } } = await axios.get(`/userAccount/${userId}`)
+        const { data: { data: learnProfile } } = await axios.get(`/LearnerProfile/${userId}`)
+        const { data: { data: profilePost } } = await axios.get(`/profilePost/${learnProfile?.id}`)
+        const { data: { data: following } } = await axios.get(`/following/${learnProfile?.id}`)
+        const { data: { data: follower } } = await axios.get(`/follower/${learnProfile?.id}`)
+        const { data: { data: learnSkill } } = await axios.get(`/learnerSkill/${learnProfile?.id}`)
+        const { data: { data: lessonsRecord } } = await axios.get(`/lessonsRecord/byUserAccountId/${userId}`)
 
 
 
-      const finishedLessonRecord = lessonsRecord.filter(item => item.completed === true)
+        const finishedLessonRecord = lessonsRecord.filter(item => item.completed === true)
 
-      const IsShowComment = {}
-      profilePost.forEach(item => {
-        IsShowComment[item.id] = false;
-      })
+        const IsShowComment = {}
+        profilePost.forEach(item => {
+          IsShowComment[item.id] = false;
+        })
 
-      const IsShowCommentReply = {}
-      postComment.forEach(item => {
-        IsShowCommentReply[item.id] = false;
-      })
+        const IsShowCommentReply = {}
+        postComment.forEach(item => {
+          IsShowCommentReply[item.id] = false;
+        })
 
-      profilePost.sort((a, b) => b.id - a.id)
-
-
-      console.log(`learnUser`, learnUser)
-      // console.log(`learnProfile`, learnProfile)
-      // console.log(`profilePost`, profilePost)
-      // console.log(`following`, following)
-      // console.log(`follower`, follower)
-      // console.log(`learnSkill`, learnSkill)
-      // console.log(`lessonsRecord`, lessonsRecord)
-      // console.log(`finishedLessonRecord`, finishedLessonRecord)
-      // console.log(`IsShowComment`, IsShowComment)
-      // console.log(`IsShowCommentReply`, IsShowCommentReply)
+        profilePost.sort((a, b) => b.id - a.id)
 
 
-      setLearnUser(learnUser)
-      setLearnProfile(learnProfile)
-      setProfilePost(profilePost)
-      setFollowing(following)
-      setFollower(follower)
-      setLearnSkill(learnSkill)
-      setFinishedLessonRecord(finishedLessonRecord)
-      setIsShowComment(IsShowComment);
+        console.log(`learnUser`, learnUser)
+        // console.log(`learnProfile`, learnProfile)
+        // console.log(`profilePost`, profilePost)
+        // console.log(`following`, following)
+        // console.log(`follower`, follower)
+        // console.log(`learnSkill`, learnSkill)
+        // console.log(`lessonsRecord`, lessonsRecord)
+        // console.log(`finishedLessonRecord`, finishedLessonRecord)
+        // console.log(`IsShowComment`, IsShowComment)
+        // console.log(`IsShowCommentReply`, IsShowCommentReply)
 
-      setIsShowCommentReply(IsShowCommentReply)
 
+        setLearnUser(learnUser)
+        setLearnProfile(learnProfile)
+        setProfilePost(profilePost)
+        setFollowing(following)
+        setFollower(follower)
+        setLearnSkill(learnSkill)
+        setFinishedLessonRecord(finishedLessonRecord)
+        setIsShowComment(IsShowComment);
 
+        setIsShowCommentReply(IsShowCommentReply)
+
+      }
+      catch (err) {
+        console.log(err.message);
+      }
     }
     run();
   }, [])
 
   useEffect(() => {
     const run = async () => {
-      const { data: { data: postLike } } = await axios.get(`/postLike/${learnProfile?.id}`)
-      const userPostLike = postLike.filter(item => item.userAccountId === user?.id)
-      console.log(`postLike`, postLike)
-      console.log(`userPostLike`, userPostLike)
-      setPostLike(postLike)
-      setUserPostLike(userPostLike)
-
+      try {
+        const { data: { data: postLike } } = await axios.get(`/postLike/${learnProfile?.id}`)
+        const userPostLike = postLike.filter(item => item.userAccountId === user?.id)
+        console.log(`postLike`, postLike)
+        console.log(`userPostLike`, userPostLike)
+        setPostLike(postLike)
+        setUserPostLike(userPostLike)
+      }
+      catch (err) {
+        console.log(err.message);
+      }
     }
     run()
   }, [learnProfile, refresh])
 
   useEffect(() => {
     const run = async () => {
-      const { data: { data: postComment } } = await axios.get(`/postComment/${learnProfile?.id}`)
-      const { data: { data: postCommentReply } } = await axios.get(`/commentReply/${learnProfile?.id}`)
-      console.log(`postComment`, postComment)
-      console.log(`postCommentReply`, postCommentReply)
-      setPostComment(postComment)
-      setPostCommentReply(postCommentReply)
+      try {
+        const { data: { data: postComment } } = await axios.get(`/postComment/${learnProfile?.id}`)
+        const { data: { data: postCommentReply } } = await axios.get(`/commentReply/${learnProfile?.id}`)
+        console.log(`postComment`, postComment)
+        console.log(`postCommentReply`, postCommentReply)
+        setPostComment(postComment)
+        setPostCommentReply(postCommentReply)
+      }
+      catch (err) {
+        console.log(err.message);
+      }
     }
     run()
   }, [learnProfile, refreshComment])
@@ -280,6 +298,27 @@ function LearnProfile() {
     setRefreshComment(cur => !cur)
   }
 
+  const handleMessage = () => {
+    try {
+      if (user && user?.id !== learnUser?.id) {
+        setDataForMessenger({ message: `Hello`, messageFrom: user.id, messageTo: learnUser.id })
+        history.push('/messenger')
+      }
+      else if (!user) setShowLogin(true)
+      else {
+        setMessageText(`You can't message to yourself.`)
+        setShowAlertMessage(true)
+        setTimeout(() => {
+          setShowAlertMessage(false)
+        }, 3000);
+      }
+
+    }
+    catch (err) {
+      console.log(err.message);
+    }
+  }
+
   return (
     <div className='learnProfilePage'>
       <Modal show={showAlertConfirm} onHide={handleClose}>
@@ -316,10 +355,15 @@ function LearnProfile() {
 
               </div>
               <div className="">
-                <h2>{learnUser.firstName} {learnUser.lastName}</h2>
+                <div className='d-flex'>
+                  <h2>{learnUser.firstName} {learnUser.lastName}</h2>
+                  <button onClick={handleMessage} className='btn btn-primary mx-2'>Message</button>
+                  {/* <button className='btn btn-warning mx-2'>follow</button> */}
+                </div>
                 <div className='mt-4'>
                   <div className='badge bg-primary mx-2'>{profilePost.length} post</div> <div className='badge bg-success mx-2'>{following.length} following</div><div className='badge bg-warning text-black mx-2'>{follower.length} follower</div>
                 </div>
+
               </div>
             </div>
             <div className="card p-4">
@@ -445,7 +489,7 @@ function LearnProfile() {
                           {
                             IsShowCommentReply[itemP.id] &&
                             <>
-                              {postCommentReply.filter(itemR => itemR.postCommentId === itemP.id).map(itemR => (
+                              {postCommentReply.filter(itemR => itemR.postCommentId === itemP.id).sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()).map(itemR => (
                                 <div key={itemR.id} >
                                   <div className="d-flex ms-5 mt-2"> {/*commentReply*/}
                                     <img src={itemR.userAccount.profilePicture} style={{ width: '30px', height: '30px', borderRadius: '50%' }} alt="" />

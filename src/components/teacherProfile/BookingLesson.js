@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../../config/axios';
 import React, { useContext, useEffect } from 'react'
 import { Modal } from 'react-bootstrap';
 import { useState } from 'react/cjs/react.development';
@@ -20,11 +20,16 @@ function BookingLesson() {
   useEffect(() => {
 
     const run = async () => {
-      const { data: { data: lessonOption } } = await axios.get(`/lessonOption/${lessonIdforBooking}`)
+      try {
+        const { data: { data: lessonOption } } = await axios.get(`/lessonOption/${lessonIdforBooking}`)
 
-      console.log(`lessonOption`, lessonOption)
+        console.log(`lessonOption`, lessonOption)
 
-      setLessonOption(lessonOption)
+        setLessonOption(lessonOption)
+      }
+      catch (err) {
+        console.log(err.message);
+      }
     }
     if (showBooking) run()
 

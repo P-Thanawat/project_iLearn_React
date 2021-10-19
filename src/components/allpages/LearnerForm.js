@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react'
 import { showLearnerFormContext } from '../../contexts/ShowLeanerFormContext'
 import { Button, Modal } from 'react-bootstrap';
-import axios from 'axios';
+import axios from '../../config/axios';
 import { AuthContext } from '../../contexts/AuthContext';
 import { AlertMessageContext } from '../../contexts/AlertMessageContext';
 
@@ -39,6 +39,7 @@ function LearnerForm() {
         setShowAlertMessage(true);
         setTimeout(() => {
           setShowAlertMessage(false);
+          window.location.reload()
         }, 2000);
       }
     }

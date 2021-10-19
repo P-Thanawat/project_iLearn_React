@@ -19,15 +19,6 @@ function RegisterForm() {
     profilePicture: '',
     livingArea: '',
   }
-  // const [typeAccount, setTypeAccount] = useState('')
-  // const [firstName, setFirstName] = useState('')
-  // const [lastName, setLastName] = useState('')
-  // const [birthDate, setBirthDate] = useState('')
-  // const [email, setEmail] = useState('')
-  // const [password, setPassword] = useState('')
-  // const [confirmPassword, setConfirmPassword] = useState('')
-  // const [profilePicture, setProfilePicture] = useState('')
-  // const [livingArea, setLivingArea] = useState('')
   const [registerData, setRegisterData] = useState(initialRegister)
   const { showLearnerForm, setShowLearnerForm } = useContext(showLearnerFormContext)
   const { showAlertMessage, setShowAlertMessage, messageText, setMessageText } = useContext(AlertMessageContext)
@@ -35,15 +26,6 @@ function RegisterForm() {
   const [error, setError] = useState({})
 
   useEffect(() => {
-    // setTypeAccount('')
-    // setFirstName('')
-    // setLastName('')
-    // setBirthDate('')
-    // setEmail('')
-    // setPassword('')
-    // setConfirmPassword('')
-    // setProfilePicture('')
-    // setLivingArea('')
     setRegisterData(initialRegister)
 
   }, [showRegisterForm])
@@ -54,55 +36,47 @@ function RegisterForm() {
 
   const handleProfilePicture = e => {
     e.preventDefault();
-    // setProfilePicture(e.target.files[0])
     setRegisterData(cur => ({ ...cur, [e.target.name]: e.target.files[0] }))
   }
 
-
-
-
-
   const handleRegister = async e => {
-    e.preventDefault();
-    if (!registerData.firstName) setError(cur => ({ ...cur, 'firstName': 'First name is required.' }))
-    if (!registerData.lastName) setError(cur => ({ ...cur, 'lastName': 'Last name is required.' }))
-    if (!registerData.birthDate) setError(cur => ({ ...cur, 'birthDate': 'Birthdate is required.' }))
-    if (!registerData.email) setError(cur => ({ ...cur, 'email': 'Email is required.' }))
-    if (!registerData.password) setError(cur => ({ ...cur, 'password': 'Password is required.' }))
-    if (!registerData.confirmPassword) setError(cur => ({ ...cur, 'confirmPassword': 'Confirm Password is required.' }))
-    if (!registerData.livingArea) setError(cur => ({ ...cur, 'livingArea': 'Living Area  is required.' }))
+    try {
+      e.preventDefault();
+      const err = false;
+      if (!registerData.firstName) { setError(cur => ({ ...cur, 'firstName': 'First name is required.' })); err = true; }
+      if (!registerData.lastName) { setError(cur => ({ ...cur, 'lastName': 'Last name is required.' })); err = true; }
+      if (!registerData.birthDate) { setError(cur => ({ ...cur, 'birthDate': 'Birthdate is required.' })); err = true;; }
+      if (!registerData.email) { setError(cur => ({ ...cur, 'email': 'Email is required.' })); err = true; }
+      if (!registerData.password) { setError(cur => ({ ...cur, 'password': 'Password is required.' })); err = true; }
+      if (!registerData.confirmPassword) { setError(cur => ({ ...cur, 'confirmPassword': 'Confirm Password is required.' })); err = true; }
+      if (!registerData.livingArea) { setError(cur => ({ ...cur, 'livingArea': 'Living Area  is required.' })); err = true; }
 
 
-    if (Object.keys(error).length) return;
+      if (Object.keys(error).length || err) return;
 
-    setShowRegisterForm(false)
-    const formData = new FormData();
-    registerData.typeAccount && formData.append('typeAccount', registerData.typeAccount) //null is changed to 'null', so it has to be checked beforehand
-    registerData.firstName && formData.append('firstName', registerData.firstName)
-    registerData.lastName && formData.append('lastName', registerData.lastName)
-    registerData.birthDate && formData.append('birthDate', registerData.birthDate)
-    registerData.email && formData.append('email', registerData.email)
-    registerData.password && formData.append('password', registerData.password)
-    registerData.confirmPassword && formData.append('confirmPassword', registerData.confirmPassword)
-    registerData.profilePicture && formData.append('profilePicture', registerData.profilePicture) //picture
-    registerData.livingArea && formData.append('livingArea', registerData.livingArea)
+      setShowRegisterForm(false)
+      const formData = new FormData();
+      registerData.typeAccount && formData.append('typeAccount', registerData.typeAccount) //null is changed to 'null', so it has to be checked beforehand
+      registerData.firstName && formData.append('firstName', registerData.firstName)
+      registerData.lastName && formData.append('lastName', registerData.lastName)
+      registerData.birthDate && formData.append('birthDate', registerData.birthDate)
+      registerData.email && formData.append('email', registerData.email)
+      registerData.password && formData.append('password', registerData.password)
+      registerData.confirmPassword && formData.append('confirmPassword', registerData.confirmPassword)
+      registerData.profilePicture && formData.append('profilePicture', registerData.profilePicture) //picture
+      registerData.livingArea && formData.append('livingArea', registerData.livingArea)
 
-    await axios.post('/register', formData)
-      .then(res => {
-        console.log(`res`, res)
-        console.log('register successful')
-        setMessageText('Register Successful')
-        setShowAlertMessage(true);
-        setTimeout(() => {
-          setShowAlertMessage(false);
-        }, 2000);
-        // if (typeAccount === 'learner') setShowLearnerForm(true)
-        // if(typeAccount === 'teacher')setShowLearnerForm(true)
-
-      })
-      .catch(err => {
-        console.log(err)
-      })
+      const { data: { user: userId } } = await axios.post('/register', formData)
+      setMessageText('Register Successful')
+      setShowAlertMessage(true);
+      setTimeout(() => {
+        setShowAlertMessage(false);
+      }, 2000);
+      await axios.post('/userMessenger', { message: 'Welcome to iLearn', messageFrom: 1, messageTo: userId })
+    }
+    catch (err) {
+      console.log(err.message);
+    };
 
   }
 
@@ -119,7 +93,6 @@ function RegisterForm() {
       if (e.target.name === 'confirmPassword') setError(cur => ({ ...cur, [e.target.name]: 'Confirm Password is required.' }))
       if (e.target.name === 'livingArea') setError(cur => ({ ...cur, [e.target.name]: 'Living Area  is required.' }))
     }
-    // if (e.target.value) setError(cur => ({ ...cur, [e.target.name]: "" }))
     if (e.target.value) {
       setError(cur => {
         const newError = { ...cur }

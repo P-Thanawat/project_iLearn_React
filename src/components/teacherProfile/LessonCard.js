@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../../config/axios';
 import React, { useContext } from 'react'
 import { AlertMessageContext } from '../../contexts/AlertMessageContext';
 import { AuthContext } from '../../contexts/AuthContext';
@@ -6,7 +6,7 @@ import { ModalContext } from '../../contexts/ModalContext';
 import { showBookingContext } from '../../contexts/showBookingContext';
 
 
-function LessonCard({ lessonOption, setShowChoosing, userAccount }) {
+function LessonCard({ lessonOption, setShowChoosing, userAccount, teacher }) {
   const { user } = useContext(AuthContext);
   const { setShowBooking, setLessonIdforBooking } = useContext(showBookingContext)
   const { setShowLogin, setShowLessonForm, setLessonData, setIsEditLesson } = useContext(ModalContext)
@@ -44,12 +44,18 @@ function LessonCard({ lessonOption, setShowChoosing, userAccount }) {
 
   }
   const handleDeleteLesson = async () => {
-    const answer = window.confirm('Are you sure to delete this lesson!');
-    if (answer) {
-      await axios.delete(`/lessons/${lessonOption?.data?.data?.[0]?.lessonsId}`)
-      window.location.reload()
+    try {
+      const answer = window.confirm('Are you sure to delete this lesson!');
+      if (answer) {
+        await axios.delete(`/lessons/${lessonOption?.data?.data?.[0]?.lessonsId}`)
+        window.location.reload()
+      }
+    }
+    catch (err) {
+      console.log(err.message);
     }
   }
+  console.log(`teacher`, teacher)
   return (
     <div>
       <div className="card text-black border-warning border-2 p-4 mb-4 ">
@@ -59,7 +65,7 @@ function LessonCard({ lessonOption, setShowChoosing, userAccount }) {
           <div className="col-4 d-flex justify-content-end align-items-center">
             {user?.id === userAccount?.id && <button className='btn btn-warning mx-2' onClick={handleDeleteLesson}>X</button>}
             {user?.id === userAccount?.id && <button className='btn btn-primary mx-2' onClick={handleEditLesson}>EDIT</button>}
-            <button className='btn btn-danger' onClick={handleShowBooking}>{lessonOption && 'USD ' + leastLessonPrice + '+'}</button>
+            <button className={`btn btn-${teacher?.ableBooking ? 'danger' : 'secondary'}`} onClick={teacher?.ableBooking ? handleShowBooking : null}>{lessonOption && 'USD ' + leastLessonPrice + '+'}</button>
           </div>
         </div>
       </div>

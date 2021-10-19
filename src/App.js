@@ -3,7 +3,6 @@ import { useContext, useEffect, useState } from 'react';
 import { Switch, Route, Redirect } from 'react-router-dom'
 import { AuthContext } from './contexts/AuthContext';
 import '../node_modules/bootstrap/dist/css/bootstrap.min.css'
-import { io } from "socket.io-client";
 
 import AddCard from './pages/AddCard';
 import Board from './pages/Board';
@@ -25,65 +24,50 @@ import MessengerBox from './components/homepage/MessengerBox';
 import { showLearnerFormContext } from './contexts/ShowLeanerFormContext';
 import LearnerForm from './components/allpages/LearnerForm';
 import axios from './config/axios';
-import { TeacherFormContext } from './contexts/showTeacherFormContext';
 import TeacherForm from './components/allpages/TeacherForm';
 import AlertMessage from './components/allpages/AlertMessage';
 import LessonForm from './components/allpages/LessonForm';
-import { ShowLessonFormContext } from './contexts/showLessonFormContext';
 import AvailableCalendar from './components/allpages/AvailableCalendar';
 import ReviewForm from './components/allpages/ReviewForm';
 import { ModalContext } from './contexts/ModalContext';
-import Payment from './pages/Payment';
 import TopupCredit from './components/allpages/TopupCredit';
 import AddCreditCard from './components/allpages/AddCreditCard';
 import AlertConfirm from './components/allpages/AlertConfirm';
+import { AlertMessageContext } from './contexts/AlertMessageContext';
 
 
 function App() {
-
-  // const socket = io("http://localhost:5000");
-  // socket.on("connect", () => {
-  //   console.log(socket.id); // x8WIv7-mJelg7on_ALbx
-  // });
-  // socket.on("disconnect", () => {
-  //   console.log(socket.id); // undefined
-  // });
-
   const { user } = useContext(AuthContext);
   const role = user ? 'user' : 'guest'
-  const { showLearnerForm, setShowLearnerForm } = useContext(showLearnerFormContext)
+  const { setShowLearnerForm } = useContext(showLearnerFormContext)
   const [teacherProfile, setTeacherProfile] = useState('')
-  const { showReviewForm, setShowReviewForm, setShowTeacherForm, setShowLessonForm } = useContext(ModalContext)
+  const { setShowReviewForm, setShowTeacherForm, setShowLessonForm } = useContext(ModalContext)
   const [lessonsRecord, setLessonsRecord] = useState({})
+  const [numberOfMessage, setNumberOfMessage] = useState(0)
+  const [learnerProfile, setLearnerProfile] = useState('')
+  const { setShowAlertMessage, setMessageText } = useContext(AlertMessageContext)
+  const [userAccount, setUserAccount] = useState('')
 
 
   useEffect(() => {
     const run = async () => {
       try {
         if (user) {
-          // console.log(`user`, user)
           const { data: { data: teacherProfile } } = await axios.get(`/teacherProfile/byUserId/${user.id}`)
           const { data: { data: learnerProfile } } = await axios.get(`/learnerProfile/byUserId/${user.id}`)
           const { data: { data: lessons } } = await axios.get(`/lessons/${teacherProfile?.id}`)
-          // console.log(`learnerProfile`, learnerProfile)
-          // console.log(`teacherProfile`, teacherProfile)
+          const { data: { data: userAccount } } = await axios.get(`/userAccount/${user?.id}`)
           setTeacherProfile(teacherProfile)
-          // console.log(`lessons`, lessons)
+          setLearnerProfile(learnerProfile)
+          setUserAccount(userAccount)
 
           if (user.typeAccount === 'learner' && !learnerProfile) { //learner log in and don't have learnerProfile
-            // console.log('showLearn')
             setShowLearnerForm(true)
           }
           if (user.typeAccount === 'teacher' && !teacherProfile) { //teacher log in and don't have teacherProfile
-            console.log('showTeacher')
             setShowTeacherForm(true)
           }
-          console.log(`user.typeAccount`, user.typeAccount)
-          console.log(`teacherProfile`, teacherProfile)
-          console.log(`lessons.length`, lessons.length)
-
           if (user.typeAccount === 'teacher' && teacherProfile && lessons.length === 0) { //no lessons
-            console.log('showLessonForm')
             setShowLessonForm(true)
           }
         }
@@ -91,31 +75,52 @@ function App() {
         //* check review after finishing class
         if (user) {
           const { data: { data: lessonsRecordData } } = await axios.get('/lessonsRecord') //get data each user following by token
-          // console.log(`lessonsRecordData`, lessonsRecordData)
           lessonsRecordData.forEach(item => {
             if ((item.endLearnTime < new Date().toISOString()) && item.completed === false) {
               setLessonsRecord(item)
               setShowReviewForm(true)
-
             }
           })
-
         }
-
 
 
       }
       catch (err) {
-        console.log(err.message)
+        console.log(err.message);
       }
     }
     run();
   }, [])
+
+  useEffect(() => {
+    const run = async () => {
+      try {
+        if (user) {
+          const { data: { data: userAccount } } = await axios.get(`/userAccount/${user?.id}`)
+          const { data: { data: messageData } } = await axios.get(`/userMessenger/${user?.id}`)
+          const receivMessage = messageData.filter(item => item.messageFrom !== user.id)
+          if (+userAccount.readMessage !== receivMessage.length) {
+            setMessageText('NEW MESSAGE!')
+            setShowAlertMessage(true);
+            setTimeout(() => {
+              setShowAlertMessage(false);
+            }, 3000);
+          }
+          await axios.put(`/userAccount/readMessage/`, { readMessage: receivMessage.length })
+        }
+      }
+
+      catch (err) {
+        console.log(err.message);
+      }
+    }
+    run();
+  })
   return (
 
     <div className="App">
 
-      {user && <UserDropDown teacherProfile={teacherProfile} />}
+      {user && <UserDropDown teacherProfile={teacherProfile} learnerProfile={learnerProfile} userAccount={userAccount} />}
       <RegisterForm />
       <LoginForm />
       <MoreInfo />
@@ -140,7 +145,6 @@ function App() {
         <Route path='/learnProfile' component={LearnProfile} />
         <Route path='/bookLesson' component={BookLesson} />
         <Route path='/messenger' component={Messenger} />
-        <Route path='/payment' component={Payment} />
         <Route path='/addCard' component={AddCard} />
         <Route path='/findFriend' component={FindFriend} />
         <Route path='/' exact component={Home} />

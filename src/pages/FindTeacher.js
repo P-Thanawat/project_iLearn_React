@@ -33,56 +33,61 @@ function FindTeacher(props) {
 
   useEffect(() => {
     const run = async () => {
-      const { data: { data: lessons } } = await axios.get('/lessons')
-      const { data: { data: reviews } } = await axios.get('/reviews')
-      console.log(`lessons`, lessons)
-      console.log(`reviews`, reviews)
+      try {
+        const { data: { data: lessons } } = await axios.get('/lessons')
+        const { data: { data: reviews } } = await axios.get('/reviews')
+        console.log(`lessons`, lessons)
+        console.log(`reviews`, reviews)
 
-      //* filter topics
-      let filteredTopicLessons = [];
-      let haveSelectFilter = false;
-      for (const [key, value] of Object.entries(topics)) {
-        if (value) {
-          haveSelectFilter = true;
-          filteredTopicLessons.push(...lessons.filter(item => item.firstTypeTag === key))
+        //* filter topics
+        let filteredTopicLessons = [];
+        let haveSelectFilter = false;
+        for (const [key, value] of Object.entries(topics)) {
+          if (value) {
+            haveSelectFilter = true;
+            filteredTopicLessons.push(...lessons.filter(item => item.firstTypeTag === key))
+          }
         }
-      }
-      if (!filteredTopicLessons.length && !haveSelectFilter) {
-        filteredTopicLessons = [...lessons]
-      }
-
-      console.log(`filteredTopicLessons`, filteredTopicLessons)
-
-      //* average all review 
-      const averageReview = []
-      lessons.forEach(item => {
-        const filteredReview = reviews.filter(itemR => itemR.lessonsId === item.id)
-        averageReview.push([item.id, filteredReview.reduce((acc, itemR) => (acc + +itemR.reviewPoint), 0) / filteredReview.length])
-      })
-      averageReview.sort((a, b) => b[1] - a[1])
-
-      console.log(`averageReview`, averageReview)
-      //* lessonsOrderReview
-      const lessonsOrderReview = []
-      averageReview.forEach(item => {
-        const result = filteredTopicLessons.find(itemL => itemL.id === item[0])
-        if (result) {
-          lessonsOrderReview.push(result)
+        if (!filteredTopicLessons.length && !haveSelectFilter) {
+          filteredTopicLessons = [...lessons]
         }
-      })
-      console.log(`lessonsOrderReview`, lessonsOrderReview)
 
-      //* lessonsOrderDate
-      const lessonsOrderDate = [...filteredTopicLessons]
-      lessonsOrderDate.sort((a, b) => (new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()))
+        console.log(`filteredTopicLessons`, filteredTopicLessons)
 
-      console.log(`lessonsOrderDate`, lessonsOrderDate)
+        //* average all review 
+        const averageReview = []
+        lessons.forEach(item => {
+          const filteredReview = reviews.filter(itemR => itemR.lessonsId === item.id)
+          averageReview.push([item.id, filteredReview.reduce((acc, itemR) => (acc + +itemR.reviewPoint), 0) / filteredReview.length])
+        })
+        averageReview.sort((a, b) => b[1] - a[1])
 
-      setLessons(lessons)
-      setReviews(reviews)
-      setLessonsOrderReview(lessonsOrderReview)
-      setLessonsOrderDate(lessonsOrderDate)
-      setFilteredTopicLessons(filteredTopicLessons)
+        console.log(`averageReview`, averageReview)
+        //* lessonsOrderReview
+        const lessonsOrderReview = []
+        averageReview.forEach(item => {
+          const result = filteredTopicLessons.find(itemL => itemL.id === item[0])
+          if (result) {
+            lessonsOrderReview.push(result)
+          }
+        })
+        console.log(`lessonsOrderReview`, lessonsOrderReview)
+
+        //* lessonsOrderDate
+        const lessonsOrderDate = [...filteredTopicLessons]
+        lessonsOrderDate.sort((a, b) => (new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()))
+
+        console.log(`lessonsOrderDate`, lessonsOrderDate)
+
+        setLessons(lessons)
+        setReviews(reviews)
+        setLessonsOrderReview(lessonsOrderReview)
+        setLessonsOrderDate(lessonsOrderDate)
+        setFilteredTopicLessons(filteredTopicLessons)
+      }
+      catch (err) {
+        console.log(err.message);
+      }
     }
     run()
   }, [topics, sortby])

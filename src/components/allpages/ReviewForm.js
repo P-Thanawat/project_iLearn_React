@@ -15,14 +15,19 @@ function ReviewForm({ lessonsRecord }) {
 
   // console.log(`lessonsRecord`, lessonsRecord)
   const handleSubmit = async e => {
-    e.preventDefault();
-    setShowReviewForm(false)
-    await axios.post('/reviews', { reviewPoint: lessonPoint, reviewMessage: comment, fisrtTag: tag?.[0], secondTag: tag?.[1], thirdTag: tag?.[2], lessonsId: lessonsRecord.lessonsId, userAccountId: user.id })
-    console.log(`lessonsRecord.lessonId`, lessonsRecord.lessonId)
-    await axios.put(`/lessonsRecord/${lessonsRecord.id}`, { completed: true })
-    window.location.reload()
+    try {
+      e.preventDefault();
+      setShowReviewForm(false)
+      await axios.post('/reviews', { reviewPoint: lessonPoint, reviewMessage: comment, fisrtTag: tag?.[0], secondTag: tag?.[1], thirdTag: tag?.[2], lessonsId: lessonsRecord.lessonsId, userAccountId: user.id })
+      console.log(`lessonsRecord.lessonId`, lessonsRecord.lessonId)
+      await axios.put(`/lessonsRecord/${lessonsRecord.id}`, { completed: true })
+      await axios.put('/userAccount/xp', { xp: 10 })
+      window.location.reload()
 
-
+    }
+    catch (err) {
+      console.log(err.message);
+    }
   }
   return (
     <div>

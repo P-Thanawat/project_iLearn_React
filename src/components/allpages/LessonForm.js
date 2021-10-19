@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from '../../config/axios';
 import React, { useContext, useState } from 'react'
 import { Button, Modal } from 'react-bootstrap';
 import { useEffect } from 'react/cjs/react.development';
@@ -51,53 +51,58 @@ function LessonForm() {
   }
 
   const handleSumbit = async e => {
-    e.preventDefault();
-    setShowLessonForm(false);
-    console.log('submit lesson')
+    try {
+      e.preventDefault();
+      setShowLessonForm(false);
+      console.log('submit lesson')
 
-    const formData = new FormData();
-    formData.append('lessonName', lessonName) //null is changed to 'null', so it has to be checked beforehand
-    lessonDetail && formData.append('lessonDetail', lessonDetail)
-    lessonPicture && formData.append('lessonPicture', lessonPicture)
-    TypeTag[0] && formData.append('firstTypeTag', TypeTag[0])
-    TypeTag[1] && formData.append('secondTypeTag', TypeTag[1])
-    TypeTag[2] && formData.append('thirdTypeTag', TypeTag[2])
-    const { data: { data: lessonsData } } = await axios.post('/lessons', formData)
-    console.log(`lessonsData`, lessonsData)
+      const formData = new FormData();
+      formData.append('lessonName', lessonName) //null is changed to 'null', so it has to be checked beforehand
+      lessonDetail && formData.append('lessonDetail', lessonDetail)
+      lessonPicture && formData.append('lessonPicture', lessonPicture)
+      TypeTag[0] && formData.append('firstTypeTag', TypeTag[0])
+      TypeTag[1] && formData.append('secondTypeTag', TypeTag[1])
+      TypeTag[2] && formData.append('thirdTypeTag', TypeTag[2])
+      const { data: { data: lessonsData } } = await axios.post('/lessons', formData)
+      console.log(`lessonsData`, lessonsData)
 
-    let lessonOptionLength = 0;
-    for (let i = 0; i <= 2; i++) {
-      if (lessonTime[i] && lessonPrice[i]) {
-        lessonOptionLength++;
+      let lessonOptionLength = 0;
+      for (let i = 0; i <= 2; i++) {
+        if (lessonTime[i] && lessonPrice[i]) {
+          lessonOptionLength++;
+        }
       }
-    }
-    console.log(`lessonOptionLength`, lessonOptionLength)
-    const lessonOptionData = []
-    for (let i = 0; i <= lessonOptionLength - 1; i++) {
-      lessonOptionData[i] = await axios.post('/lessonOption', { lessonTime: lessonTime[i], lessonPrice: lessonPrice[i], numberOfLesson: numberOfLesson[i] ?? null, promotionPrice: promotionPrice[i] ?? null, lessonsId: lessonsData.id })
-      console.log('lessonoption' + i)
-    }
-    if (lessonsData && lessonOptionData[0]) {
-      console.log('create lesson successful')
-      setMessageText('Created Lesson Successful')
-      setShowAlertMessage(true);
-      setTimeout(() => {
-        setShowAlertMessage(false);
-      }, 2000);
+      console.log(`lessonOptionLength`, lessonOptionLength)
+      const lessonOptionData = []
+      for (let i = 0; i <= lessonOptionLength - 1; i++) {
+        lessonOptionData[i] = await axios.post('/lessonOption', { lessonTime: lessonTime[i], lessonPrice: lessonPrice[i], numberOfLesson: numberOfLesson[i] ?? null, promotionPrice: promotionPrice[i] ?? null, lessonsId: lessonsData.id })
+        console.log('lessonoption' + i)
+      }
+      if (lessonsData && lessonOptionData[0]) {
+        console.log('create lesson successful')
+        setMessageText('Created Lesson Successful')
+        setShowAlertMessage(true);
+        setTimeout(() => {
+          setShowAlertMessage(false);
+        }, 2000);
+        window.location.reload()
+
+      }
+
+      setLessonName('')
+      setLessonDetail('')
+      setLessonPicture('')
+      setTypeTag([])
+      setLessonTime([])
+      setLessonPrice([])
+      setNumberOfLesson([])
+      setPromotionPrice([])
+      setIsShowPromotion([false, false, false])
 
     }
-
-    setLessonName('')
-    setLessonDetail('')
-    setLessonPicture('')
-    setTypeTag([])
-    setLessonTime([])
-    setLessonPrice([])
-    setNumberOfLesson([])
-    setPromotionPrice([])
-    setIsShowPromotion([false, false, false])
-
-
+    catch (err) {
+      console.log(err.message);
+    }
   }
 
   const handleChooseAvailable = () => {
@@ -106,50 +111,58 @@ function LessonForm() {
 
 
 
-  const handleClose = () => setShowLessonForm(false);
-  const handleShow = () => setShowLessonForm(true);
+
 
 
   const handleEdit = async e => {
-    e.preventDefault();
-    setShowLessonForm(false);
+    try {
+      e.preventDefault();
+      setShowLessonForm(false);
 
-    const formData = new FormData();
-    lessonName && formData.append('lessonName', lessonName) //null is changed to 'null', so it has to be checked beforehand
-    lessonDetail && formData.append('lessonDetail', lessonDetail)
-    lessonPicture && formData.append('lessonPicture', lessonPicture ?? null)
-    TypeTag[0] && formData.append('firstTypeTag', TypeTag[0])
-    TypeTag[1] && formData.append('secondTypeTag', TypeTag[1])
-    TypeTag[2] && formData.append('thirdTypeTag', TypeTag[2])
-    const { data: { data: lessonsData } } = await axios.put(`/lessons/${lessonData?.data?.data?.[0]?.lesson?.id}`, formData)
-    console.log(`lessonsData`, lessonsData)
+      const formData = new FormData();
+      lessonName && formData.append('lessonName', lessonName) //null is changed to 'null', so it has to be checked beforehand
+      lessonDetail && formData.append('lessonDetail', lessonDetail)
+      lessonPicture && formData.append('lessonPicture', lessonPicture ?? null)
+      TypeTag[0] && formData.append('firstTypeTag', TypeTag[0])
+      TypeTag[1] && formData.append('secondTypeTag', TypeTag[1])
+      TypeTag[2] && formData.append('thirdTypeTag', TypeTag[2])
+      const { data: { data: lessonsData } } = await axios.put(`/lessons/${lessonData?.data?.data?.[0]?.lesson?.id}`, formData)
+      console.log(`lessonsData`, lessonsData)
 
-    let lessonOptionLength = 0;
-    for (let i = 0; i <= 2; i++) {
-      if (lessonTime[i] && lessonPrice[i]) {
-        lessonOptionLength++;
+      let lessonOptionLength = 0;
+      for (let i = 0; i <= 2; i++) {
+        if (lessonTime[i] && lessonPrice[i]) {
+          lessonOptionLength++;
+        }
+      }
+      console.log(`lessonOptionLength`, lessonOptionLength)
+      const lessonOptionData = []
+      for (let i = 0; i <= lessonOptionLength - 1; i++) {
+        if (lessonData?.data?.data?.[i]) {
+          lessonOptionData[i] = await axios.put(`/lessonOption/${lessonData?.data?.data?.[i]?.id}`, { lessonTime: lessonTime[i], lessonPrice: lessonPrice[i], numberOfLesson: numberOfLesson[i] ?? null, promotionPrice: promotionPrice[i] ?? null })
+        }
+        else {
+          lessonOptionData[i] = await axios.post('/lessonOption', { lessonTime: lessonTime[i], lessonPrice: lessonPrice[i], numberOfLesson: numberOfLesson[i] ?? null, promotionPrice: promotionPrice[i] ?? null, lessonsId: lessonData?.data?.data?.[0]?.lessonsId })
+        }
+      }
+      if (lessonsData && lessonOptionData[0]) {
+        console.log('create lesson successful')
+        setMessageText('Created Lesson Successful')
+        setShowAlertMessage(true);
+        setTimeout(() => {
+          setShowAlertMessage(false);
+        }, 2000);
+
       }
     }
-    console.log(`lessonOptionLength`, lessonOptionLength)
-    const lessonOptionData = []
-    for (let i = 0; i <= lessonOptionLength - 1; i++) {
-      if (lessonData?.data?.data?.[i]) {
-        lessonOptionData[i] = await axios.put(`/lessonOption/${lessonData?.data?.data?.[i]?.id}`, { lessonTime: lessonTime[i], lessonPrice: lessonPrice[i], numberOfLesson: numberOfLesson[i] ?? null, promotionPrice: promotionPrice[i] ?? null })
-      }
-      else {
-        lessonOptionData[i] = await axios.post('/lessonOption', { lessonTime: lessonTime[i], lessonPrice: lessonPrice[i], numberOfLesson: numberOfLesson[i] ?? null, promotionPrice: promotionPrice[i] ?? null, lessonsId: lessonData?.data?.data?.[0]?.lessonsId })
-      }
-    }
-    if (lessonsData && lessonOptionData[0]) {
-      console.log('create lesson successful')
-      setMessageText('Created Lesson Successful')
-      setShowAlertMessage(true);
-      setTimeout(() => {
-        setShowAlertMessage(false);
-      }, 2000);
-
+    catch (err) {
+      console.log(err.message);
     }
   }
+
+  const handleClose = () => setShowLessonForm(false);
+  const handleShow = () => setShowLessonForm(true);
+
   return (
     <>
 

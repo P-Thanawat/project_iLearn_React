@@ -17,16 +17,21 @@ function AddCreditCard() {
   const handleShow = () => setShowAddCreditCard(true);
 
   const handleAdd = async () => {
-    handleClose()
-    setCardNumber('')
-    setExpiration('')
-    setSecurityCode('')
-    await axios.post('/creditCard', { cardNumber, expiration, securityCode, confirmCard: false })
-    setMessageText('Add Credit Card Successful')
-    setShowAlertMessage(true)
-    setTimeout(() => {
-      window.location.reload()
-    }, 1000);
+    try {
+      handleClose()
+      setCardNumber('')
+      setExpiration('')
+      setSecurityCode('')
+      await axios.post('/creditCard', { cardNumber, expiration, securityCode, confirmCard: false })
+      setMessageText('Add Credit Card Successful')
+      setShowAlertMessage(true)
+      setTimeout(() => {
+        window.location.reload()
+      }, 1000);
+    }
+    catch (err) {
+      console.log(err.message);
+    }
   }
 
   const handleSetCardNumber = e => {

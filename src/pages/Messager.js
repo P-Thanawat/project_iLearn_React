@@ -4,7 +4,7 @@ import { io } from "socket.io-client";
 import { ListGroup, Form, InputGroup, Button } from 'react-bootstrap'
 import Header from '../components/allpages/Header';
 import { AuthContext } from '../contexts/AuthContext';
-import axios from 'axios';
+import axios from '../config/axios';
 import { DataForMessengerContext } from '../contexts/DataForMessenger';
 
 function Messenger() {
@@ -25,23 +25,25 @@ function Messenger() {
 
   useEffect(() => {
     const run = async () => {
-      const { data: { data: messageData } } = await axios.get(`/userMessenger/${user?.id}`)
-      console.log(`messageData`, messageData)
+      try {
+        const { data: { data: messageData } } = await axios.get(`/userMessenger/${user?.id}`)
 
-      const contacts = [];
-      messageData.forEach(item => {
-        if (item.messageFrom === user.id && !contacts.find(contact => contact.id === item.messageTo)) {
-          contacts.push(item.messageToUser);
-        }
-        if (item.messageTo === user.id && !contacts.find(contact => contact.id === item.messageFrom)) {
-          contacts.push(item.messageFromUser);
-        }
-      })
-      console.log(`contacts`, contacts)
-      setMessage(messageData)
-      setContacts(contacts)
+        const contacts = [];
+        messageData.forEach(item => {
+          if (item.messageFrom === user.id && !contacts.find(contact => contact.id === item.messageTo)) {
+            contacts.push(item.messageToUser);
+          }
+          if (item.messageTo === user.id && !contacts.find(contact => contact.id === item.messageFrom)) {
+            contacts.push(item.messageFromUser);
+          }
+        })
+        setMessage(messageData)
+        setContacts(contacts)
 
-
+      }
+      catch (err) {
+        console.log(err.message);
+      }
     }
     run()
   }, [refreshMessage])
@@ -72,12 +74,16 @@ function Messenger() {
 
 
   const handleSubmit = async e => {
-    e.preventDefault();
-    // socket.emit('send-message', { selectCoversation, text })
-    await axios.post('userMessenger', { message: text, messageFrom: user.id, messageTo: selectCoversation })
-    setText('')
-    setRefreshMessage(cur => !cur)
-
+    try {
+      e.preventDefault();
+      // socket.emit('send-message', { selectCoversation, text })
+      await axios.post('userMessenger', { message: text, messageFrom: user.id, messageTo: selectCoversation })
+      setText('')
+      setRefreshMessage(cur => !cur)
+    }
+    catch (err) {
+      console.log(err.message);
+    }
   }
 
   // useEffect(() => {

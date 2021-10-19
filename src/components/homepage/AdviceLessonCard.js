@@ -7,7 +7,6 @@ function Box(props) {
 
   const review = reviews.filter(item => item.lessonsId === lessons.id)
   const reviewAvg = review.reduce((acc, item) => ((acc + +item.reviewPoint)), 0) / review.length;
-  console.log(`lessons`, lessons)
   return (
     <div className="box">
       <Link to={`/teacherProfile/${lessons?.teacherProfileId}`} style={{ textDecoration: 'none' }} >
